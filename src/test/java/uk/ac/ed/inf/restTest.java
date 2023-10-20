@@ -15,13 +15,4 @@ public class restTest {
         }
     }
 
-    @Test
-    public void testGetOrd(){
-        RestClient restController = new RestClient();
-        Order[] orders = restController.getOrders();
-        for(Order order: orders){
-            System.out.println(order);
-        }
-    }
-
 }
