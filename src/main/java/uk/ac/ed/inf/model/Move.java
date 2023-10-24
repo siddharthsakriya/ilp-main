@@ -2,12 +2,12 @@ package uk.ac.ed.inf.model;
 
 public class Move {
     private String orderNo;
-    private String fromLongitude;
-    private String fromLatitude;
-    private String toLongitude;
-    private String toLatitude;
+    private Double fromLongitude;
+    private Double fromLatitude;
+    private Double toLongitude;
+    private Double toLatitude;
 
-    public Move(String orderNo, String fromLongitude, String fromLatitude, String toLongitude, String toLatitude) {
+    public Move(String orderNo, Double fromLongitude, Double fromLatitude, Double toLongitude, Double toLatitude) {
         this.orderNo = orderNo;
         this.fromLongitude = fromLongitude;
         this.fromLatitude = fromLatitude;
@@ -15,23 +15,31 @@ public class Move {
         this.toLatitude = toLatitude;
     }
 
+    public Move(){
+        this.orderNo = "";
+        this.fromLongitude = null;
+        this.fromLatitude = null;
+        this.toLongitude = null;
+        this.toLatitude = null;
+    }
+
     public String getOrderNo() {
         return orderNo;
     }
 
-    public String getFromLongitude() {
+    public Double getFromLongitude() {
         return fromLongitude;
     }
 
-    public String getFromLatitude() {
+    public Double getFromLatitude() {
         return fromLatitude;
     }
 
-    public String getToLongitude() {
+    public Double getToLongitude() {
         return toLongitude;
     }
 
-    public String getToLatitude() {
+    public Double getToLatitude() {
         return toLatitude;
     }
 
@@ -40,22 +48,22 @@ public class Move {
         return orderNo;
     }
 
-    public String setFromLongitude(String fromLongitude) {
+    public Double setFromLongitude(Double fromLongitude) {
         this.fromLongitude = fromLongitude;
         return fromLongitude;
     }
 
-    public String setFromLatitude(String fromLatitude) {
+    public Double setFromLatitude(Double fromLatitude) {
         this.fromLatitude = fromLatitude;
         return fromLatitude;
     }
 
-    public String setToLongitude(String toLongitude) {
+    public Double setToLongitude(Double toLongitude) {
         this.toLongitude = toLongitude;
         return toLongitude;
     }
 
-    public String setToLatitude(String toLatitude) {
+    public Double setToLatitude(Double toLatitude) {
         this.toLatitude = toLatitude;
         return toLatitude;
     }
