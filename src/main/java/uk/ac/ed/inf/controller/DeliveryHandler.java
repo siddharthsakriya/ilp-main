@@ -57,10 +57,10 @@ public class DeliveryHandler {
             order = orderValidator.validateOrder(order, restaurants);
             Restaurant orderRestaurant = orderValidator.getOrderRestraunt(order, restaurants);
             if (order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED && order.getOrderValidationCode() == OrderValidationCode.NO_ERROR){
-                List<LngLat> path = PathfindingAlgorithm.pathfinder(new LngLat(-3.187670, 55.944752), orderRestaurant.location(), noFlyZones, centralArea);
-                PathToJson.convertToMoveAndSerialise(path, order, fileMap);
-                Collections.reverse(path);
-                PathToJson.convertToMoveAndSerialise(path, order, fileMap);
+                List<LngLat> pickupPath = PathfindingAlgorithm.pathfinder(new LngLat(-3.187670, 55.944752), orderRestaurant.location(), noFlyZones, centralArea);
+                PathToJson.convertToMoveAndSerialise(pickupPath, order, fileMap);
+                List<LngLat> deliveryPath = PathfindingAlgorithm.pathfinder(orderRestaurant.location(), new LngLat(-3.187670, 55.944752), noFlyZones, centralArea);
+                PathToJson.convertToMoveAndSerialise(deliveryPath, order, fileMap);
                 order.setOrderStatus(OrderStatus.DELIVERED);
                 OrderToJson.serialiseOrder(order, fileMap.get("deliveryFileName"));
             }
