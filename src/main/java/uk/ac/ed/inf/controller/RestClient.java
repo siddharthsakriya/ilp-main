@@ -8,22 +8,22 @@ import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
 public class RestClient {
-    public Restaurant[] getRestaurants() {
+    public static Restaurant[] getRestaurants() {
         String uri = "https://ilp-rest.azurewebsites.net/restaurants";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Restaurant[]> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, Restaurant[].class);
         Restaurant[] restaurants = responseEntity.getBody();
         return restaurants;
     }
-    public Order[] getOrdersByDate(String date) {
-        String uri = "https://ilp-rest.azurewebsites.net/orders" + date;
+    public static Order[] getOrdersByDate(String date) {
+        String uri = "https://ilp-rest.azurewebsites.net/orders/" + date;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Order[]> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, Order[].class);
         Order[] orders = responseEntity.getBody();
         return orders;
     }
 
-    public NamedRegion[] getNoFlyZones(){
+    public static NamedRegion[] getNoFlyZones(){
         String uri = "https://ilp-rest.azurewebsites.net/noFlyZones";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<NamedRegion[]> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, NamedRegion[].class);
@@ -31,7 +31,7 @@ public class RestClient {
         return noFlyZones;
     }
 
-    public NamedRegion getCentralArea(){
+    public static NamedRegion getCentralArea(){
         String uri = "https://ilp-rest.azurewebsites.net/centralArea";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<NamedRegion> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, NamedRegion.class);

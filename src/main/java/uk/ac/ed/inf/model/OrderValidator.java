@@ -171,7 +171,7 @@ public class OrderValidator implements uk.ac.ed.inf.ilp.interfaces.OrderValidati
      * @param restaurants
      * @return restaurant if order is valid, null otherwise
      */
-    private static Restaurant getOrderRestraunt(Order order, Restaurant[] restaurants){
+    public static Restaurant getOrderRestraunt(Order order, Restaurant[] restaurants){
         HashSet<Pizza> pizzas = new HashSet<>();
         pizzas.addAll(List.of(order.getPizzasInOrder()));
         for (Restaurant restaurant : restaurants) {

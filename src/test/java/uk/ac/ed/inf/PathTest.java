@@ -36,4 +36,6 @@ public class PathTest {
             System.out.println("[\n" + lngLat.lng() + ", " + lngLat.lat() + "\n],");
         }
     }
+
+
 }

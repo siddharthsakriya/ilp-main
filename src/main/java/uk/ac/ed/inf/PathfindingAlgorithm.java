@@ -55,6 +55,7 @@ public class PathfindingAlgorithm {
         }
         return NextPositionsCopy;
     }
+
     public static LngLat pickOptimalMove(List<LngLat> nextPositionsFiltered, LngLatHandling lngLatHandling, LngLat curr, LngLat end){
         double minDist = Double.MAX_VALUE;
         LngLat nextMove = null;
