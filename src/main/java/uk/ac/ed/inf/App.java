@@ -6,8 +6,13 @@ package uk.ac.ed.inf;
  */
 public class App 
 {
-    public static void main( String[] args )
+    public static void main(String[] args)
     {
-        System.out.println( "Hello World!" );
+        if (args.length != 2) {
+            System.out.println("Usage: java -jar PizzaDronz-1.0-SNAPSHOT.jar <date> <url>");
+            System.exit(1);
+        }
+        String date = args[0];
+        String url = args[1];
     }
 }
