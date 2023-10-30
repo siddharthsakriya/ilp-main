@@ -1,6 +1,7 @@
-package uk.ac.ed.inf.controller;
+package uk.ac.ed.inf.handlers;
 
-import uk.ac.ed.inf.PathfindingAlgorithm;
+import uk.ac.ed.inf.pathfinding.AStarPathFindingAlgorithim;
+import uk.ac.ed.inf.clients.ILPRestClient;
 import uk.ac.ed.inf.converters.OrderToJson;
 import uk.ac.ed.inf.converters.PathToJson;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
@@ -9,7 +10,6 @@ import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
-import uk.ac.ed.inf.model.OrderValidator;
 
 import java.io.File;
 import java.util.*;
@@ -46,21 +46,21 @@ public class DeliveryHandler {
     }
 
     public static void deliverOrders(String date){
-        Order[] orders = RestClient.getOrdersByDate(date);
-        Restaurant[] restaurants = RestClient.getRestaurants();
-        NamedRegion[] noFlyZones = RestClient.getNoFlyZones();
-        NamedRegion centralArea = RestClient.getCentralArea();
-        OrderValidator orderValidator = new OrderValidator();
+        Order[] orders = ILPRestClient.getOrdersByDate(date);
+        Restaurant[] restaurants = ILPRestClient.getRestaurants();
+        NamedRegion[] noFlyZones = ILPRestClient.getNoFlyZones();
+        NamedRegion centralArea = ILPRestClient.getCentralArea();
+        OrderHandler orderHandler = new OrderHandler();
         HashMap<String, File> fileMap = setupPath(date);
 
         for (Order order: orders){
-            order = orderValidator.validateOrder(order, restaurants);
-            Restaurant orderRestaurant = orderValidator.getOrderRestraunt(order, restaurants);
+            order = orderHandler.validateOrder(order, restaurants);
+            Restaurant orderRestaurant = orderHandler.getOrderRestraunt(order, restaurants);
             if (order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED && order.getOrderValidationCode() == OrderValidationCode.NO_ERROR){
-                List<LngLat> pickupPath = PathfindingAlgorithm.pathfinder(new LngLat(-3.187670, 55.944752), orderRestaurant.location(), noFlyZones, centralArea);
+                List<LngLat> pickupPath = AStarPathFindingAlgorithim.astar(new LngLat(-3.186874, 55.944494), orderRestaurant.location(), noFlyZones, centralArea);
                 PathToJson.convertToMoveAndSerialise(pickupPath, order, fileMap);
-                List<LngLat> deliveryPath = PathfindingAlgorithm.pathfinder(orderRestaurant.location(), new LngLat(-3.187670, 55.944752), noFlyZones, centralArea);
-                PathToJson.convertToMoveAndSerialise(deliveryPath, order, fileMap);
+                Collections.reverse(pickupPath);
+                PathToJson.convertToMoveAndSerialise(pickupPath, order, fileMap);
                 order.setOrderStatus(OrderStatus.DELIVERED);
                 OrderToJson.serialiseOrder(order, fileMap.get("deliveryFileName"));
             }

@@ -1,4 +1,4 @@
-package uk.ac.ed.inf.model;
+package uk.ac.ed.inf.handlers;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
 import uk.ac.ed.inf.ilp.constant.SystemConstants;
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
-public class OrderValidator implements uk.ac.ed.inf.ilp.interfaces.OrderValidation{
+public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation{
     /**
      *
      * @param orderToValidate

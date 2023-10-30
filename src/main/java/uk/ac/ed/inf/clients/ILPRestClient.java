@@ -1,4 +1,4 @@
-package uk.ac.ed.inf.controller;
+package uk.ac.ed.inf.clients;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +7,7 @@ import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
-public class RestClient {
+public class ILPRestClient {
     public static Restaurant[] getRestaurants() {
         String uri = "https://ilp-rest.azurewebsites.net/restaurants";
         RestTemplate restTemplate = new RestTemplate();

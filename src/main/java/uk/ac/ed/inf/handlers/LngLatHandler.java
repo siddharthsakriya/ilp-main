@@ -1,4 +1,4 @@
-package uk.ac.ed.inf.model;
+package uk.ac.ed.inf.handlers;
 import uk.ac.ed.inf.ilp.constant.SystemConstants;
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
@@ -92,6 +92,7 @@ public class LngLatHandler implements LngLatHandling{
 
         lng = lng + (SystemConstants.DRONE_MOVE_DISTANCE * Math.cos(Math.toRadians(angle)));
         lat = lat + (SystemConstants.DRONE_MOVE_DISTANCE * Math.sin(Math.toRadians(angle)));
+
         return new LngLat(lng, lat);
     }
 }
