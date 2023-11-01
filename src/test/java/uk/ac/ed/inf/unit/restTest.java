@@ -1,8 +1,8 @@
-package uk.ac.ed.inf;
+package uk.ac.ed.inf.unit;
 
 import org.junit.jupiter.api.Test;
 import uk.ac.ed.inf.handlers.DeliveryHandler;
-import uk.ac.ed.inf.clients.ILPRestClient;
+import uk.ac.ed.inf.client.ILPRestClient;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
@@ -15,9 +15,10 @@ public class restTest {
             System.out.println(restaurant.name());
         }
     }
+
     @Test
     public void genJson(){
-        String date = "2023-10-27";
+        String date = "2023-10-28";
         DeliveryHandler.deliverOrders(date);
     }
 
@@ -26,6 +27,6 @@ public class restTest {
         String date = "2023-10-27";
         ILPRestClient ILPRestClient = new ILPRestClient();
         Order[] orders = ILPRestClient.getOrdersByDate(date);
-        System.out.println(orders.length);
     }
+
 }

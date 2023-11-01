@@ -1,7 +1,9 @@
 package uk.ac.ed.inf.handlers;
 
+import uk.ac.ed.inf.converters.PathToGeoJson;
+import uk.ac.ed.inf.model.Move;
 import uk.ac.ed.inf.pathfinding.AStarPathFindingAlgorithim;
-import uk.ac.ed.inf.clients.ILPRestClient;
+import uk.ac.ed.inf.client.ILPRestClient;
 import uk.ac.ed.inf.converters.OrderToJson;
 import uk.ac.ed.inf.converters.PathToJson;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
@@ -16,7 +18,7 @@ import java.util.*;
 
 public class DeliveryHandler {
     public static HashMap<String, File> setupPath(String date){
-        String filepath = "src/main/java/uk/ac/ed/inf/resultfiles";
+        String filepath = "resultfiles";
         String flightpathFileName = "flightpath-" + date + ".json";
         String deliveryFileName = "deliveries-" + date + ".json";
         String droneGeoJsonFileName = "drone-" + date + ".geojson";
@@ -57,10 +59,12 @@ public class DeliveryHandler {
             order = orderHandler.validateOrder(order, restaurants);
             Restaurant orderRestaurant = orderHandler.getOrderRestraunt(order, restaurants);
             if (order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED && order.getOrderValidationCode() == OrderValidationCode.NO_ERROR){
-                List<LngLat> pickupPath = AStarPathFindingAlgorithim.astar(new LngLat(-3.186874, 55.944494), orderRestaurant.location(), noFlyZones, centralArea);
-                PathToJson.convertToMoveAndSerialise(pickupPath, order, fileMap);
+                List<Move> pickupPath = AStarPathFindingAlgorithim.astar(new LngLat(-3.186874, 55.944494), orderRestaurant.location(), noFlyZones, centralArea, order);
+                PathToJson.serialiseMove(pickupPath, fileMap.get("flightpathFileName"));
+                PathToGeoJson.geofyJson(fileMap.get("droneGeoJsonFileName"), pickupPath);
                 Collections.reverse(pickupPath);
-                PathToJson.convertToMoveAndSerialise(pickupPath, order, fileMap);
+                PathToJson.serialiseMove(pickupPath, fileMap.get("flightpathFileName"));
+                PathToGeoJson.geofyJson(fileMap.get("droneGeoJsonFileName"), pickupPath);
                 order.setOrderStatus(OrderStatus.DELIVERED);
                 OrderToJson.serialiseOrder(order, fileMap.get("deliveryFileName"));
             }

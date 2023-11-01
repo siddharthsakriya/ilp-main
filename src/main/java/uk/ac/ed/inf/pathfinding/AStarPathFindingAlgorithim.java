@@ -3,15 +3,16 @@ package uk.ac.ed.inf.pathfinding;
 
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
+import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.interfaces.LngLatHandling;
 import uk.ac.ed.inf.handlers.LngLatHandler;
+import uk.ac.ed.inf.model.Move;
 import uk.ac.ed.inf.model.Node;
 
 import java.util.*;
 
-
 public class AStarPathFindingAlgorithim {
-    public static List<LngLat> astar(LngLat Start, LngLat End, NamedRegion[] noFlyZones, NamedRegion centralArea){
+    public static List<Move> astar(LngLat Start, LngLat End, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
         PriorityQueue<Node> openSet = new PriorityQueue<>(new Comparator<Node>(){
             @Override
             public int compare(Node o1, Node o2) {
@@ -29,7 +30,7 @@ public class AStarPathFindingAlgorithim {
         while(!openSet.isEmpty()){
             Node currNode = openSet.poll();
             if (lngLatHandling.isCloseTo(currNode.getCurrLngLat(), End)){
-                return reconstructPath(currNode, End);
+                return reconstructPath(currNode, End, order);
             }
             if (!lngLatHandling.isInRegion(currNode.getCurrLngLat(), centralArea)){
                 flag = false;
@@ -51,8 +52,6 @@ public class AStarPathFindingAlgorithim {
         return null;
     }
 
-
-
     public static List<LngLat> filterMoves(List<LngLat> nextPositions, NamedRegion[] noFlyZones, LngLatHandling lngLatHandling, boolean flag, NamedRegion centralArea){
         List<LngLat> NextPositionsCopy = new ArrayList<>(nextPositions);
         for(LngLat nextPosition: nextPositions){
@@ -65,20 +64,31 @@ public class AStarPathFindingAlgorithim {
                        NextPositionsCopy.remove(nextPosition);
                    }
                 }
-
             }
         }
         return NextPositionsCopy;
     }
 
-    public static List<LngLat> reconstructPath(Node currNode, LngLat End){
-        List<LngLat> path = new ArrayList<>();
+    public static List<Move> reconstructPath(Node currNode, LngLat End, Order order){
+        List<Move> path = new ArrayList<>();
         while(currNode != null){
-            path.add(currNode.getCurrLngLat());
+            Move temp = new Move();
+            temp.setOrderNo(order.getOrderNo());
+            if (currNode.getParentLngLat() == null){
+                temp.setFromLatitude(null);
+                temp.setFromLongitude(null);
+                temp.setToLongitude(currNode.getCurrLngLat().lng());
+                temp.setToLatitude(currNode.getCurrLngLat().lat());
+                break;
+            }
+            temp.setFromLongitude(currNode.getParentLngLat().getCurrLngLat().lng());
+            temp.setFromLatitude(currNode.getParentLngLat().getCurrLngLat().lat());
+            temp.setToLongitude(currNode.getCurrLngLat().lng());
+            temp.setToLatitude(currNode.getCurrLngLat().lat());
+            path.add(temp);
             currNode = currNode.getParentLngLat();
         }
         Collections.reverse(path);
-        path.add(End);
         return path;
     }
 
