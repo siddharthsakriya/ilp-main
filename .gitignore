@@ -2,5 +2,4 @@
 /target
 /.idea
 /out
-/src/main/java/uk/ac/ed/inf/resultfiles
-IlpDataObjects.jar
+resultfiles
