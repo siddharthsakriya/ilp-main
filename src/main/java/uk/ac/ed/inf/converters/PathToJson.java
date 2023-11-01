@@ -13,21 +13,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PathToJson {
+    /**
+     * Serialises the given moveList to the given outputFile
+     * @param moveList
+     * @param outputFile
+     */
     public static void serialiseMove(List<Move> moveList, File outputFile){
         try {
+
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Move> existingMoves;
+            List<Move> existingMoves = new ArrayList<>();
+
             if(outputFile.exists()){
                 TypeFactory typeFactory = objectMapper.getTypeFactory();
                 CollectionType collectionType = typeFactory.constructCollectionType(ArrayList.class, Move.class);
                 existingMoves = objectMapper.readValue(outputFile, collectionType);
             }
-            else{
-                existingMoves = new ArrayList<>();
-            }
+
             existingMoves.addAll(moveList);
+
             ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Move>>() {});
             writer.writeValue(outputFile, existingMoves);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

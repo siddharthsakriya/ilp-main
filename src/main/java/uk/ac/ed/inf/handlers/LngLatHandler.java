@@ -8,7 +8,7 @@ public class LngLatHandler implements LngLatHandling{
     /**
      * @param startPosition
      * @param endPosition
-     * @return the distance between the two positions
+     * @return euclidean distance between the two positions
      */
     @Override
     public double distanceTo(LngLat startPosition, LngLat endPosition) {
@@ -26,6 +26,7 @@ public class LngLatHandler implements LngLatHandling{
         double distance = Math.sqrt(lngSquared + ltdSquared);
         return distance;
     }
+
     /**
      * @param startPosition
      * @param otherPosition
@@ -76,6 +77,7 @@ public class LngLatHandler implements LngLatHandling{
         }
         return count % 2 == 1;
     }
+
     /**
      * @param startPosition
      * @param angle

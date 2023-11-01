@@ -14,19 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderToJson {
-
+    /**
+     * Serialises an order to a json file
+     * @param order
+     * @param outputFile
+     */
     public static void serialiseOrder(Order order, File outputFile){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
-            List<Order> existingOrders;
+            List<Order> existingOrders = new ArrayList<>();;
             if(outputFile.exists()){
                 TypeFactory typeFactory = objectMapper.getTypeFactory();
                 CollectionType collectionType = typeFactory.constructCollectionType(ArrayList.class, Order.class);
                 existingOrders = objectMapper.readValue(outputFile, collectionType);
-            }
-            else{
-                existingOrders = new ArrayList<>();
             }
             existingOrders.add(order);
             ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Order>>() {});

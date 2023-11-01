@@ -1,6 +1,5 @@
 package uk.ac.ed.inf.pathfinding;
 
-
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
@@ -11,12 +10,12 @@ import uk.ac.ed.inf.model.Node;
 
 import java.util.*;
 
-public class AStarPathFindingAlgorithim {
-    public static List<Move> astar(LngLat Start, LngLat End, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
+public class PathFindingAlgorithm {
+    public static List<Move> findPath(LngLat Start, LngLat End, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
         PriorityQueue<Node> openSet = new PriorityQueue<>(new Comparator<Node>(){
             @Override
             public int compare(Node o1, Node o2) {
-                return Double.compare(o1.getgScore() + o1.gethScore(), o2.getgScore() + o2.gethScore());
+                return Double.compare(o1.getGScore() + o1.getHScore(), o2.getGScore() + o2.getHScore());
             }
         });
 
@@ -72,20 +71,18 @@ public class AStarPathFindingAlgorithim {
     public static List<Move> reconstructPath(Node currNode, LngLat End, Order order){
         List<Move> path = new ArrayList<>();
         while(currNode != null){
-            Move temp = new Move();
-            temp.setOrderNo(order.getOrderNo());
+            Move move = new Move();
+            move.setOrderNo(order.getOrderNo());
             if (currNode.getParentLngLat() == null){
-                temp.setFromLatitude(null);
-                temp.setFromLongitude(null);
-                temp.setToLongitude(currNode.getCurrLngLat().lng());
-                temp.setToLatitude(currNode.getCurrLngLat().lat());
+                move.setToLongitude(currNode.getCurrLngLat().lng());
+                move.setToLatitude(currNode.getCurrLngLat().lat());
                 break;
             }
-            temp.setFromLongitude(currNode.getParentLngLat().getCurrLngLat().lng());
-            temp.setFromLatitude(currNode.getParentLngLat().getCurrLngLat().lat());
-            temp.setToLongitude(currNode.getCurrLngLat().lng());
-            temp.setToLatitude(currNode.getCurrLngLat().lat());
-            path.add(temp);
+            move.setFromLongitude(currNode.getParentLngLat().getCurrLngLat().lng());
+            move.setFromLatitude(currNode.getParentLngLat().getCurrLngLat().lat());
+            move.setToLongitude(currNode.getCurrLngLat().lng());
+            move.setToLatitude(currNode.getCurrLngLat().lat());
+            path.add(move);
             currNode = currNode.getParentLngLat();
         }
         Collections.reverse(path);

@@ -15,24 +15,10 @@ public class Node {
         this.hScore = hScore;
     }
 
-    public void setgScore(Double gScore) {
-        this.gScore = gScore;
-    }
-    public void sethScore(Double hScore) {
-        this.hScore = hScore;
-    }
-
-    public void setParentLngLat(Node parentNode) {
-        this.parentNode = parentNode;
-    }
-    public void setCurrLngLat(LngLat currLngLat) {
-        this.currLngLat = currLngLat;
-    }
-
-    public Double getgScore() {
+    public Double getGScore() {
         return gScore;
     }
-    public Double gethScore() {
+    public Double getHScore() {
         return hScore;
     }
     public Node getParentLngLat() {

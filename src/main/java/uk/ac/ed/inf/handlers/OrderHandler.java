@@ -53,7 +53,7 @@ public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation
             orderToValidate.setOrderValidationCode(OrderValidationCode.TOTAL_INCORRECT);
             return orderToValidate;
         }
-        Restaurant orderRestaurant = getOrderRestraunt(orderToValidate, definedRestaurants);
+        Restaurant orderRestaurant = getOrderRestaurant(orderToValidate, definedRestaurants);
         if(orderRestaurant == null){
             orderToValidate.setOrderStatus(OrderStatus.INVALID);
             orderToValidate.setOrderValidationCode(OrderValidationCode.PIZZA_FROM_MULTIPLE_RESTAURANTS);
@@ -171,7 +171,7 @@ public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation
      * @param restaurants
      * @return restaurant if order is valid, null otherwise
      */
-    public static Restaurant getOrderRestraunt(Order order, Restaurant[] restaurants){
+    public static Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants){
         HashSet<Pizza> pizzas = new HashSet<>();
         pizzas.addAll(List.of(order.getPizzasInOrder()));
         for (Restaurant restaurant : restaurants) {

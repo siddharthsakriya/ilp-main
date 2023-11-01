@@ -7,13 +7,6 @@ public class Move {
     private Double toLongitude;
     private Double toLatitude;
 
-    public Move(String orderNo, Double fromLongitude, Double fromLatitude, Double toLongitude, Double toLatitude) {
-        this.orderNo = orderNo;
-        this.fromLongitude = fromLongitude;
-        this.fromLatitude = fromLatitude;
-        this.toLongitude = toLongitude;
-        this.toLatitude = toLatitude;
-    }
 
     public Move(){
         this.orderNo = "";
