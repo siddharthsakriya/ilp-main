@@ -4,6 +4,8 @@ import junit.framework.Assert;
 import org.junit.jupiter.api.Test;
 import uk.ac.ed.inf.handlers.DeliveryHandler;
 import uk.ac.ed.inf.client.ILPRestClient;
+import uk.ac.ed.inf.ilp.data.LngLat;
+import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
@@ -32,6 +34,14 @@ public class RestRetrivalTests {
     @Test
     public void testGetNoFlyZones(){
         ILPRestClient restController = new ILPRestClient();
+        NamedRegion[] noFlyZones = restController.getNoFlyZones();
+        for (NamedRegion noFlyZone : noFlyZones){
+            LngLat[] vertices = noFlyZone.vertices();
+            for (LngLat v: vertices){
+                System.out.println("["+ v.lng() + " , " + v.lat() + "],");
+            }
+            System.out.println("-----");
+        }
         Assert.assertTrue(restController.getNoFlyZones().length > 0);
     }
 

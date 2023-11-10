@@ -27,5 +27,16 @@ public class Node {
     public LngLat getCurrLngLat() {
         return currLngLat;
     }
+    public void setGScore(Double gScore) {
+        this.gScore = gScore;
+    }
+
+    public void setHScore(Double hScore) {
+        this.hScore = hScore;
+    }
+
+    public void setParentNode(Node parentNode) {
+        this.parentNode = parentNode;
+    }
 
 }
