@@ -7,12 +7,14 @@ public class Node {
     private Double hScore;
     private LngLat currLngLat;
     private Node parentNode;
+    private double angle;
 
-    public Node(LngLat currLngLat, Node parentNode, Double gScore, Double hScore){
+    public Node(LngLat currLngLat, Node parentNode, Double gScore, Double hScore, double angle){
         this.currLngLat = currLngLat;
         this.parentNode = parentNode;
         this.gScore = gScore;
         this.hScore = hScore;
+        this.angle = angle;
     }
 
     public Double getGScore() {
@@ -27,16 +29,22 @@ public class Node {
     public LngLat getCurrLngLat() {
         return currLngLat;
     }
-    public void setGScore(Double gScore) {
+    public double getAngle() {
+        return angle;
+    }
+    public void setgScore(Double gScore) {
         this.gScore = gScore;
     }
 
-    public void setHScore(Double hScore) {
+    public void sethScore(Double hScore) {
         this.hScore = hScore;
     }
 
     public void setParentNode(Node parentNode) {
         this.parentNode = parentNode;
+    }
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 
 }

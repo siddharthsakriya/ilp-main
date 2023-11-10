@@ -1,5 +1,6 @@
 package uk.ac.ed.inf.handlers;
 
+import uk.ac.ed.inf.model.Delivery;
 import uk.ac.ed.inf.model.Move;
 import uk.ac.ed.inf.pathfinding.PathFindingAlgorithm;
 import uk.ac.ed.inf.client.ILPRestClient;
@@ -75,7 +76,6 @@ public class DeliveryHandler {
             if (isOrderReady(order)){
                 List<Move> path = PathFindingAlgorithm.findPath(startPoint,
                         orderRestaurant.location(), noFlyZones, centralArea, order);
-
                 PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
 
                 Collections.reverse(path);
@@ -83,10 +83,10 @@ public class DeliveryHandler {
                 PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
 
                 order.setOrderStatus(OrderStatus.DELIVERED);
-                OrderToJson.serialiseOrder(order, fileMap.get("deliveryFileName"));
+                OrderToJson.serialiseOrder(new Delivery(order.getOrderNo(), order.getOrderStatus(), order.getOrderValidationCode(), order.getPriceTotalInPence()), fileMap.get("deliveryFileName"));
             }
             else {
-                OrderToJson.serialiseOrder(order, fileMap.get("deliveryFileName"));
+                OrderToJson.serialiseOrder(new Delivery(order.getOrderNo(), order.getOrderStatus(), order.getOrderValidationCode(), order.getPriceTotalInPence()), fileMap.get("deliveryFileName"));
             }
         }
     }

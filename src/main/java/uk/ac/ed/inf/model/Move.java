@@ -4,8 +4,11 @@ public class Move {
     private String orderNo;
     private Double fromLongitude;
     private Double fromLatitude;
+    private double angle;
     private Double toLongitude;
     private Double toLatitude;
+
+
 
 
     public Move(){
@@ -36,6 +39,10 @@ public class Move {
         return toLatitude;
     }
 
+    public double getAngle() {
+        return angle;
+    }
+
     public String setOrderNo(String orderNo) {
         this.orderNo = orderNo;
         return orderNo;
@@ -60,4 +67,9 @@ public class Move {
         this.toLatitude = toLatitude;
         return toLatitude;
     }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
 }

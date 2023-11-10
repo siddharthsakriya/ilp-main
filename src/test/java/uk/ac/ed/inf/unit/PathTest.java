@@ -16,13 +16,12 @@ import java.util.List;
 public class PathTest {
     public static void main(String[] args) {
         List<Move> path = setup();
-        List<Move> path1 = setup2();
-        List<Move> path2 = setup3();
-        List<Move> path3 = setup4();
 
-        for (Move move : path1){
+
+        for (Move move : path){
             System.out.println(" ");
             System.out.println("[\n" + move.getFromLongitude() + ", " + move.getFromLatitude() + "\n],");
+            System.out.println(move.getAngle());
         }
         System.out.println(path.size());
 
