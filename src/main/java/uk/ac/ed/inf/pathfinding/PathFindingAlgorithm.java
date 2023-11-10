@@ -75,6 +75,7 @@ public class PathFindingAlgorithm {
 
     public static List<Move> reconstructPath(Node currNode, LngLat End, Order order){
         List<Move> path = new ArrayList<>();
+        List<Move> fullPath = new ArrayList<>();
         while(currNode != null){
             Move move = new Move();
             move.setOrderNo(order.getOrderNo());
@@ -91,8 +92,14 @@ public class PathFindingAlgorithm {
             path.add(move);
             currNode = currNode.getParentLngLat();
         }
-        Collections.reverse(path);
-        return path;
+        fullPath.addAll(path);
+        Collections.reverse(fullPath);
+        //TODO: might have to change
+        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
+        fullPath.addAll(path);
+        //TODO: might have to change
+        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
+        return fullPath;
     }
 
     public static List<Node> generateNextPositions(LngLat curr, LngLatHandling lngLatHandling, NamedRegion[] noFlyZones, boolean flag, NamedRegion centralArea){

@@ -76,9 +76,9 @@ public class DeliveryHandler {
             if (isOrderReady(order)){
                 List<Move> path = PathFindingAlgorithm.findPath(startPoint,
                         orderRestaurant.location(), noFlyZones, centralArea, order);
-                PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
-
-                Collections.reverse(path);
+//                PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
+//
+//                Collections.reverse(path);
 
                 PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
 

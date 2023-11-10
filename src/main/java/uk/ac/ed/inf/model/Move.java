@@ -8,15 +8,22 @@ public class Move {
     private Double toLongitude;
     private Double toLatitude;
 
-
-
-
     public Move(){
         this.orderNo = "";
         this.fromLongitude = null;
         this.fromLatitude = null;
+        this.angle = 0.0;
         this.toLongitude = null;
         this.toLatitude = null;
+    }
+
+    public Move(String orderNo, Double fromLongitude, Double fromLatitude, Double toLongitude, Double toLatitude, double angle){
+        this.orderNo = orderNo;
+        this.fromLongitude = fromLongitude;
+        this.fromLatitude = fromLatitude;
+        this.angle = angle;
+        this.toLongitude = toLongitude;
+        this.toLatitude = toLatitude;
     }
 
     public String getOrderNo() {
