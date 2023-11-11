@@ -48,17 +48,21 @@ public class LngLatHandler implements LngLatHandling{
         double yp = position.lat();
         int count = 0;
         LngLat[] vertices = region.vertices();
+
         for(LngLat lnglat : vertices){
             if(lnglat.equals(position)){
                 return true;
             }
         }
+
         for(int i = 0; i < vertices.length; i++) {
+
             double x1 = vertices[i].lng();
             double y1 = vertices[i].lat();
             double x2 = vertices[(i + 1) % vertices.length].lng();
             double y2 = vertices[(i + 1) % vertices.length].lat();
             double x0 = x1 + (((yp - y1) / (y2 - y1))*(x2 - x1));
+
             boolean condition1 = (yp < y1) != (yp < y2);
             boolean condition2 = xp < x0;
 

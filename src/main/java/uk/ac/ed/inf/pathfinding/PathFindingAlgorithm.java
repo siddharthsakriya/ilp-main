@@ -61,7 +61,6 @@ public class PathFindingAlgorithm {
                         openSet.add(nextPosition);
                     }
                 }
-
                 else{
                     nodeMap.put(pos, nextPosition);
                     openSet.add(nextPosition);
