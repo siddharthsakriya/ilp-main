@@ -4,28 +4,29 @@ import uk.ac.ed.inf.model.Delivery;
 import uk.ac.ed.inf.model.Move;
 import uk.ac.ed.inf.pathfinding.PathFindingAlgorithm;
 import uk.ac.ed.inf.client.ILPRestClient;
-import uk.ac.ed.inf.converters.OrderToJson;
-import uk.ac.ed.inf.converters.PathToJson;
+import uk.ac.ed.inf.converters.JsonWriter;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
-import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class DeliveryHandler {
-
     /**
-     * Creates the resultfiles directory and the files that are to be written to
-     * @param date
-     * @return HashMap<String, File> fileMap, with keys flightpathFileName, deliveryFileName, droneGeoJsonFileName
+     * Sets up the necessary files and directories for a given date and returns a HashMap of file objects.
+     *
+     * @param date The date for which the files and directory are being set up.
+     * @return A HashMap with file objects as values, where the keys are as follows:
+     *         - "flightpathFileName": The file containing flight path data for the specified date.
+     *         - "deliveryFileName": The file containing delivery information for the specified date.
+     *         - "droneGeoJsonFileName": The file containing drone geospatial data for the specified date.
      */
+
     public static HashMap<String, File> setupPath(String date){
         String filepath = "resultfiles";
         String flightpathFileName = "flightpath-" + date + ".json";
@@ -61,36 +62,47 @@ public class DeliveryHandler {
      * Iterates through the orders and delivers them if they are valid
      * @param date
      */
-    public static void deliverOrders(String date) {
-        Order[] orders = ILPRestClient.getOrdersByDate(date);
-        Restaurant[] restaurants = ILPRestClient.getRestaurants();
-        NamedRegion[] noFlyZones = ILPRestClient.getNoFlyZones();
-        NamedRegion centralArea = ILPRestClient.getCentralArea();
+    public static void deliverOrders(String date, String url) {
+        ILPRestClient ilpRestClient = new ILPRestClient(url);
+        Order[] orders = ilpRestClient.getOrdersByDate(date);
+        Restaurant[] restaurants = ilpRestClient.getRestaurants();
+        NamedRegion[] noFlyZones = ilpRestClient.getNoFlyZones();
+        NamedRegion centralArea = ilpRestClient.getCentralArea();
+
         OrderHandler orderHandler = new OrderHandler();
         HashMap<String, File> fileMap = setupPath(date);
-        LngLat startPoint = new LngLat(-3.186874, 55.944494);
+        List<Delivery> deliveriesToWrite = new ArrayList<>();
+        List<Move> movesToWrite = new ArrayList<>();
+
+        if (orders == null || restaurants == null){
+            return;
+        }
 
         for (Order order: orders){
             order = orderHandler.validateOrder(order, restaurants);
             Restaurant orderRestaurant = orderHandler.getOrderRestaurant(order, restaurants);
+
             if (isOrderReady(order)){
-                List<Move> path = PathFindingAlgorithm.findPath(startPoint,
-                        orderRestaurant.location(), noFlyZones, centralArea, order);
-//                PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
-//
-//                Collections.reverse(path);
-
-                PathToJson.serialiseMove(path, fileMap.get("flightpathFileName"));
-
+                List<Move> path = PathFindingAlgorithm.findPath(orderRestaurant.location(), noFlyZones, centralArea,
+                        order);
+                if (path == null){
+                    deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus(),
+                            order.getOrderValidationCode(), order.getPriceTotalInPence()));
+                    continue;
+                }
+                movesToWrite.addAll(path);
                 order.setOrderStatus(OrderStatus.DELIVERED);
-                OrderToJson.serialiseOrder(new Delivery(order.getOrderNo(), order.getOrderStatus(), order.getOrderValidationCode(), order.getPriceTotalInPence()), fileMap.get("deliveryFileName"));
+                deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus(),
+                        order.getOrderValidationCode(), order.getPriceTotalInPence()));
             }
             else {
-                OrderToJson.serialiseOrder(new Delivery(order.getOrderNo(), order.getOrderStatus(), order.getOrderValidationCode(), order.getPriceTotalInPence()), fileMap.get("deliveryFileName"));
+                deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus(),
+                        order.getOrderValidationCode(), order.getPriceTotalInPence()));
             }
         }
-    }
 
+        writeToFiles(movesToWrite, deliveriesToWrite, fileMap);
+    }
     /**
      * Checks if an order is ready to be delivered, helper function for deliverOrders
      * @param order
@@ -99,6 +111,12 @@ public class DeliveryHandler {
     private static boolean isOrderReady(Order order){
         return order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED
                 && order.getOrderValidationCode() == OrderValidationCode.NO_ERROR;
+    }
+
+    private static void writeToFiles(List<Move> movesToWrite, List<Delivery> deliveriesToWrite, HashMap<String, File> fileMap){
+        JsonWriter.writeMoveJson(movesToWrite, fileMap.get("flightpathFileName"));
+        JsonWriter.writeMoveGeoJson(movesToWrite, fileMap.get("droneGeoJsonFileName"));
+        JsonWriter.writeOrderJson(deliveriesToWrite, fileMap.get("deliveryFileName"));
     }
 
 }

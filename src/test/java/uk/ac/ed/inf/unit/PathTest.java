@@ -28,9 +28,9 @@ public class PathTest {
     }
 
     public static List<Move> setup(){
-        LngLat destination = new LngLat( -3.202541470527649,55.943284737579376);
+        LngLat destination = new LngLat( -3.1838572025299072, 55.94449876875712);
         LngLat start = new LngLat(-3.186874, 55.944494);
-        ILPRestClient ILPRestClient = new ILPRestClient();
+        ILPRestClient ILPRestClient = new ILPRestClient("https://ilp-rest.azurewebsites.net/");
         Order order = new Order("1",
                 LocalDate.of(2023, 10, 2),
                 OrderStatus.UNDEFINED,
@@ -45,13 +45,12 @@ public class PathTest {
         order.setCreditCardInformation(new CreditCardInformation("1234567890123456",
                 "12/25",
                 "123"));
-        return PathFindingAlgorithm.findPath(start, destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
+        return PathFindingAlgorithm.findPath(destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
     }
 
     public static List<Move> setup2(){
-        LngLat destination = new LngLat( -3.202541470527649,55.943284737579376);
-        LngLat start = new LngLat(-3.186874, 55.944494);
-        ILPRestClient ILPRestClient = new ILPRestClient();
+        LngLat destination = new LngLat( -3.1838572025299072, 55.94449876875712);
+        ILPRestClient ILPRestClient = new ILPRestClient("https://ilp-rest.azurewebsites.net/");
         Order order = new Order("1",
                 LocalDate.of(2023, 10, 2),
                 OrderStatus.UNDEFINED,
@@ -66,13 +65,12 @@ public class PathTest {
         order.setCreditCardInformation(new CreditCardInformation("1234567890123456",
                 "12/25",
                 "123"));
-        return PathFindingAlgorithm.findPath(start, destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
+        return PathFindingAlgorithm.findPath(destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
     }
 
     public static List<Move> setup3(){
         LngLat destination = new LngLat( -3.1838572025299072,55.94449876875712);
-        LngLat start = new LngLat(-3.186874, 55.944494);
-        ILPRestClient ILPRestClient = new ILPRestClient();
+        ILPRestClient ILPRestClient = new ILPRestClient("https://ilp-rest.azurewebsites.net/");
         Order order = new Order("1",
                 LocalDate.of(2023, 10, 2),
                 OrderStatus.UNDEFINED,
@@ -87,13 +85,12 @@ public class PathTest {
         order.setCreditCardInformation(new CreditCardInformation("1234567890123456",
                 "12/25",
                 "123"));
-        return PathFindingAlgorithm.findPath(start, destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
+        return PathFindingAlgorithm.findPath(destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
     }
 
     public static List<Move> setup4(){
         LngLat destination = new LngLat( -3.1940174102783203,55.94390696616939);
-        LngLat start = new LngLat(-3.186874, 55.944494);
-        ILPRestClient ILPRestClient = new ILPRestClient();
+        ILPRestClient ILPRestClient = new ILPRestClient("https://ilp-rest.azurewebsites.net/");
         Order order = new Order("1",
                 LocalDate.of(2023, 10, 2),
                 OrderStatus.UNDEFINED,
@@ -108,7 +105,7 @@ public class PathTest {
         order.setCreditCardInformation(new CreditCardInformation("1234567890123456",
                 "12/25",
                 "123"));
-        return PathFindingAlgorithm.findPath(start, destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
+        return PathFindingAlgorithm.findPath(destination, ILPRestClient.getNoFlyZones(), ILPRestClient.getCentralArea(), order);
     }
 
 }

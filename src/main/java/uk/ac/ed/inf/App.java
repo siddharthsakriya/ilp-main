@@ -5,10 +5,11 @@ public class App
 {
     public static void main(String[] args)
     {
-        if (args.length != 1) {
+        if (args.length != 2) {
             System.exit(1);
         }
         String date = args[0];
-        DeliveryHandler.deliverOrders(date);
+        String url = args[1];
+        DeliveryHandler.deliverOrders(date, url);
     }
 }

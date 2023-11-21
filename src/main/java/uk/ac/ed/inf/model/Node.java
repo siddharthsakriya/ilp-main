@@ -23,7 +23,7 @@ public class Node {
     public Double getHScore() {
         return hScore;
     }
-    public Node getParentLngLat() {
+    public Node getParentNode() {
         return parentNode;
     }
     public LngLat getCurrLngLat() {
@@ -32,11 +32,11 @@ public class Node {
     public double getAngle() {
         return angle;
     }
-    public void setgScore(Double gScore) {
+    public void setGScore(Double gScore) {
         this.gScore = gScore;
     }
 
-    public void sethScore(Double hScore) {
+    public void setHScore(Double hScore) {
         this.hScore = hScore;
     }
 
@@ -46,5 +46,4 @@ public class Node {
     public void setAngle(double angle) {
         this.angle = angle;
     }
-
 }

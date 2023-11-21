@@ -11,37 +11,40 @@ import uk.ac.ed.inf.model.Node;
 
 import java.util.*;
 
+
 public class PathFindingAlgorithm {
-    public static List<Move> findPath(LngLat Start, LngLat End, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
+    private static LngLatHandling lngLatHandler = new LngLatHandler();
+    private static final LngLat startPoint = new LngLat(-3.186874, 55.944494);
 
-        PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(o -> o.getGScore() + o.getHScore())
-        );
+    public static List<Move> findPath(LngLat goalPoint, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
 
+        PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(currNode -> currNode.getGScore() +
+                currNode.getHScore()));
         Map<LngLat, Node> nodeMap = new HashMap<>();
-        boolean flag = true;
         Set<LngLat> closedSet = new HashSet<>();
-        LngLatHandling lngLatHandling = new LngLatHandler();
-        Node startNode = new Node(Start, null, 0.0, heuristic(Start, End), 999);
 
-        nodeMap.put(Start, startNode);
+        boolean inCentral = true;
+
+        Node startNode = new Node(startPoint, null, 0.0, heuristic(startPoint, goalPoint), 999);
+        nodeMap.put(startPoint, startNode);
         openSet.add(startNode);
-        closedSet.add(startNode.getCurrLngLat());
+//        closedSet.add(startNode.getCurrLngLat());
 
         while(!openSet.isEmpty()){
+
             Node currNode = openSet.poll();
             closedSet.add(currNode.getCurrLngLat());
 
-            if (lngLatHandling.isCloseTo(currNode.getCurrLngLat(), End)){
-                return reconstructPath(currNode, End, order);
+            if (lngLatHandler.isCloseTo(currNode.getCurrLngLat(), goalPoint)){
+                return reconstructPath(currNode, goalPoint, startPoint, order);
+            }
+            if (!lngLatHandler.isInRegion(currNode.getCurrLngLat(), centralArea)){
+                inCentral = false;
             }
 
-            if (!lngLatHandling.isInRegion(currNode.getCurrLngLat(), centralArea)){
-                flag = false;
-            }
-
-            List<Node> nextPositions = generateNextPositions(currNode.getCurrLngLat(), lngLatHandling, noFlyZones, flag, centralArea);
-
+            List<Node> nextPositions = generateNextPositions(currNode.getCurrLngLat(), noFlyZones, inCentral, centralArea);
             for(Node nextPosition: nextPositions){
+
                 if (closedSet.contains(nextPosition.getCurrLngLat())){
                     continue;
                 }
@@ -50,11 +53,11 @@ public class PathFindingAlgorithm {
 
                 LngLat pos = nextPosition.getCurrLngLat();
                 nextPosition.setParentNode(currNode);
-                nextPosition.setgScore(tentativeGScore);
-                nextPosition.sethScore(heuristic(nextPosition.getCurrLngLat(), End));
+                nextPosition.setGScore(tentativeGScore);
+                nextPosition.setHScore(heuristic(nextPosition.getCurrLngLat(), goalPoint));
 
                 if(nodeMap.containsKey(pos)){
-                    Node node = nodeMap.get(nextPosition);
+                    Node node = nodeMap.get(pos);
                     if(node.getGScore() > tentativeGScore){
                         nodeMap.put(pos, nextPosition);
                         openSet.remove(node);
@@ -64,55 +67,48 @@ public class PathFindingAlgorithm {
                 else{
                     nodeMap.put(pos, nextPosition);
                     openSet.add(nextPosition);
-                    closedSet.add(pos);
                 }
-
             }
         }
         return null;
     }
 
-    public static List<Move> reconstructPath(Node currNode, LngLat End, Order order){
+    public static List<Move> reconstructPath(Node currNode, LngLat End, LngLat Start, Order order){
         List<Move> path = new ArrayList<>();
         List<Move> fullPath = new ArrayList<>();
-        while(currNode != null){
-            Move move = new Move();
-            move.setOrderNo(order.getOrderNo());
-            if (currNode.getParentLngLat() == null){
-                move.setToLongitude(currNode.getCurrLngLat().lng());
-                move.setToLatitude(currNode.getCurrLngLat().lat());
-                break;
-            }
-            move.setFromLongitude(currNode.getParentLngLat().getCurrLngLat().lng());
-            move.setFromLatitude(currNode.getParentLngLat().getCurrLngLat().lat());
-            move.setToLongitude(currNode.getCurrLngLat().lng());
-            move.setToLatitude(currNode.getCurrLngLat().lat());
-            move.setAngle(currNode.getAngle());
+        while(currNode.getParentNode() != null){
+            Move move = new Move(order.getOrderNo(), currNode.getParentNode().getCurrLngLat().lng(),
+                    currNode.getParentNode().getCurrLngLat().lat(), currNode.getCurrLngLat().lng(),
+                    currNode.getCurrLngLat().lat(), currNode.getAngle());
             path.add(move);
-            currNode = currNode.getParentLngLat();
+            currNode = currNode.getParentNode();
         }
+
         fullPath.addAll(path);
         Collections.reverse(fullPath);
-        //TODO: might have to change
-        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
-        fullPath.addAll(path);
-        //TODO: might have to change
-        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
+//        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
+
+        for(Move move: path){
+            Move revMove = new Move(move.getOrderNo(), move.getToLongitude(), move.getToLatitude(),
+                    move.getFromLongitude(), move.getFromLatitude(), (move.getAngle() + 180) % 360);
+            fullPath.add(revMove);
+        }
+//        fullPath.add(new Move(order.getOrderNo(), Start.lng(), Start.lat(), Start.lng(), Start.lat(), 999));
         return fullPath;
     }
 
-    public static List<Node> generateNextPositions(LngLat curr, LngLatHandling lngLatHandling, NamedRegion[] noFlyZones, boolean flag, NamedRegion centralArea){
+    private static List<Node> generateNextPositions(LngLat curr, NamedRegion[] noFlyZones, boolean flag, NamedRegion centralArea){
         List<Node> nextPositions = new ArrayList<>();
         double[] legalMoves = {0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5};
         for(double legalMove: legalMoves){
             boolean isValid = true;
-            LngLat nextPosition = lngLatHandling.nextPosition(curr, legalMove);
+            LngLat nextPosition = lngLatHandler.nextPosition(curr, legalMove);
             for(NamedRegion noFlyZone: noFlyZones){
-                if(lngLatHandling.isInRegion(nextPosition, noFlyZone)){
+                if(lngLatHandler.isInRegion(nextPosition, noFlyZone)){
                     isValid = false;
                 }
                 if(!flag){
-                    if(lngLatHandling.isInRegion(nextPosition, centralArea)){
+                    if(lngLatHandler.isInRegion(nextPosition, centralArea)){
                         isValid = false;
                     }
                 }
@@ -124,8 +120,7 @@ public class PathFindingAlgorithm {
         return nextPositions;
     }
 
-    public static double heuristic(LngLat pos, LngLat end){
-        LngLatHandling lngLatHandler = new LngLatHandler();
+    private static double heuristic(LngLat pos, LngLat end){
         return lngLatHandler.distanceTo(pos, end);
     }
 }
