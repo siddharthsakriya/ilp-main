@@ -99,7 +99,7 @@ public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation
      * @param order
      * @return true if expiry date is valid, false otherwise
      */
-    private static Boolean isExpiryValid(Order order){
+    public static Boolean isExpiryValid(Order order){
         String creditCardExpiry = order.getCreditCardInformation().getCreditCardExpiry();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
         simpleDateFormat.setLenient(false);

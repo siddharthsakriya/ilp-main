@@ -1,15 +1,16 @@
 package uk.ac.ed.inf.client;
 
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
+import java.io.IOException;
+import java.net.URL;
+
 public class ILPRestClient {
     private static String BASE_URL;
-    private static final RestTemplate restTemplate = new RestTemplate();
 
     public ILPRestClient(String url) {
         this.BASE_URL = url;
@@ -20,16 +21,17 @@ public class ILPRestClient {
      * @return an array of restaurants
      */
     public Restaurant[] getRestaurants() {
+        ObjectMapper mapper = new ObjectMapper();
         try {
-            String url = BASE_URL + "/restaurants";
-            ResponseEntity<Restaurant[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, Restaurant[].class);
-            return responseEntity.getBody();
-        }
-        catch (ResourceAccessException e){
-            System.out.println("Error, the URL is incorrect");
+            Restaurant[] restaurants = mapper.readValue(new URL(BASE_URL + "/restaurants"), Restaurant[].class);
+            System.out.println("Restaurants Retrieved Successfully");
+            return restaurants;
+        } catch (IOException e) {
+            System.err.println(e);
             System.exit(1);
-            return null;
         }
+        Restaurant[] restaurants = {};
+        return restaurants;
     }
 
     /**
@@ -38,22 +40,18 @@ public class ILPRestClient {
      * @return an array of orders for a specific date
      */
     public Order[] getOrdersByDate(String date) {
-        try{
-
-            String url = BASE_URL + "/orders/" +  date;
-            ResponseEntity<Order[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, Order[].class);
-            return responseEntity.getBody();
-        }
-        catch (HttpClientErrorException e){
-            System.out.println("Error, the date is incorrect");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            Order[] orders = mapper.readValue(new URL(BASE_URL + "/orders/" + date), Order[].class);
+            System.out.println("Orders Retrieved Successfully");
+            return orders;
+        } catch (IOException e) {
+            System.err.println(e);
             System.exit(1);
-            return null;
         }
-        catch (ResourceAccessException e){
-            System.out.println("Error, the URL is incorrect");
-            System.exit(1);
-            return null;
-        }
+        Order[] orders = {};
+        return orders;
     }
 
     /**
@@ -62,15 +60,16 @@ public class ILPRestClient {
      */
     public NamedRegion[] getNoFlyZones(){
         try {
-            String url = BASE_URL + "/noFlyZones";
-            ResponseEntity<NamedRegion[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, NamedRegion[].class);
-            return responseEntity.getBody();
-        }
-        catch (ResourceAccessException e){
-            System.out.println("Error, the URL is incorrect");
+            ObjectMapper mapper = new ObjectMapper();
+            NamedRegion[] noFlyZones = mapper.readValue(new URL(BASE_URL + "/noflyzones"), NamedRegion[].class);
+            System.out.println("No Fly Zones Retrieved Successfully");
+            return noFlyZones;
+        } catch (IOException e) {
+            System.err.println(e);
             System.exit(1);
-            return null;
         }
+        NamedRegion[] noFlyZones = {};
+        return noFlyZones;
     }
 
     /**
@@ -78,15 +77,15 @@ public class ILPRestClient {
      * @return the central area
      */
     public NamedRegion getCentralArea(){
-        try{
-            String url = BASE_URL + "/centralArea";
-            ResponseEntity<NamedRegion> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, NamedRegion.class);
-            return responseEntity.getBody();
-        }
-        catch (ResourceAccessException e){
-            System.out.println("Error, the URL is incorrect");
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            NamedRegion centralArea = mapper.readValue(new URL(BASE_URL + "/centralarea"), NamedRegion.class);
+            System.out.println("Central Area Retrieved Successfully");
+            return centralArea;
+        } catch (IOException e) {
+            System.err.println(e);
             System.exit(1);
-            return null;
         }
+        return null;
     }
 }

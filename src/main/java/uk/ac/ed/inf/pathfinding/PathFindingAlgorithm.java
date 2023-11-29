@@ -17,38 +17,46 @@ public class PathFindingAlgorithm {
     private static final LngLat startPoint = new LngLat(-3.186874, 55.944494);
 
     public static List<Move> findPath(LngLat goalPoint, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
-
+        //Open set which contains nodes that have been discovered but not yet explored
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(currNode -> currNode.getGScore() +
                 currNode.getHScore()));
+        //nodeMap which contains all the LngLats that have been discovered
         Map<LngLat, Node> nodeMap = new HashMap<>();
+        //Closed set which contains nodes that have been explored
         Set<LngLat> closedSet = new HashSet<>();
 
         boolean inCentral = true;
 
+        //Initialise start node
         Node startNode = new Node(startPoint, null, 0.0, heuristic(startPoint, goalPoint), 999);
         nodeMap.put(startPoint, startNode);
         openSet.add(startNode);
-//        closedSet.add(startNode.getCurrLngLat());
 
         while(!openSet.isEmpty()){
 
+            //Get the node with the lowest fScore
             Node currNode = openSet.poll();
             closedSet.add(currNode.getCurrLngLat());
 
+            //If the current node is the goal node, return the path
             if (lngLatHandler.isCloseTo(currNode.getCurrLngLat(), goalPoint)){
                 return reconstructPath(currNode, goalPoint, startPoint, order);
             }
+            //If the current node is in the central area, set the flag to true
             if (!lngLatHandler.isInRegion(currNode.getCurrLngLat(), centralArea)){
                 inCentral = false;
             }
 
-            List<Node> nextPositions = generateNextPositions(currNode.getCurrLngLat(), noFlyZones, inCentral, centralArea);
+            //Generate the next positions
+            List<Node> nextPositions = generateNextPositions(currNode.getCurrLngLat(), noFlyZones, inCentral,
+                    centralArea);
             for(Node nextPosition: nextPositions){
-
+                //If the next position has already been explored, skip it
                 if (closedSet.contains(nextPosition.getCurrLngLat())){
                     continue;
                 }
 
+                //Calculate the gScore of the next position
                 double tentativeGScore = currNode.getGScore() + SystemConstants.DRONE_MOVE_DISTANCE;
 
                 LngLat pos = nextPosition.getCurrLngLat();
@@ -59,12 +67,14 @@ public class PathFindingAlgorithm {
                 if(nodeMap.containsKey(pos)){
                     Node node = nodeMap.get(pos);
                     if(node.getGScore() > tentativeGScore){
+                        //Update the node map and the open set if we find a better gScore
                         nodeMap.put(pos, nextPosition);
                         openSet.remove(node);
                         openSet.add(nextPosition);
                     }
                 }
                 else{
+                    //Add the next position to the open set and the node map
                     nodeMap.put(pos, nextPosition);
                     openSet.add(nextPosition);
                 }
@@ -86,14 +96,14 @@ public class PathFindingAlgorithm {
 
         fullPath.addAll(path);
         Collections.reverse(fullPath);
-//        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
+        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
 
         for(Move move: path){
             Move revMove = new Move(move.getOrderNo(), move.getToLongitude(), move.getToLatitude(),
                     move.getFromLongitude(), move.getFromLatitude(), (move.getAngle() + 180) % 360);
             fullPath.add(revMove);
         }
-//        fullPath.add(new Move(order.getOrderNo(), Start.lng(), Start.lat(), Start.lng(), Start.lat(), 999));
+        fullPath.add(new Move(order.getOrderNo(), Start.lng(), Start.lat(), Start.lng(), Start.lat(), 999));
         return fullPath;
     }
 

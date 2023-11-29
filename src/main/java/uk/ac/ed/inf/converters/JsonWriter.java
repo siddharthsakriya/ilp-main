@@ -3,7 +3,6 @@ package uk.ac.ed.inf.converters;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.ac.ed.inf.model.Delivery;
@@ -23,7 +22,7 @@ public class JsonWriter {
     public static void writeMoveJson(List<Move> moveList, File outputFile){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Move>>() {}).withDefaultPrettyPrinter();
+            ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Move>>() {});
             writer.writeValue(outputFile, moveList);
         } catch (IOException e) {
             e.printStackTrace();

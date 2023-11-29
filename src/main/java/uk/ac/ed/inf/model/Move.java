@@ -17,6 +17,9 @@ public class Move {
         this.toLatitude = toLatitude;
     }
 
+    public Move(){
+    }
+
     public String getOrderNo() {
         return orderNo;
     }

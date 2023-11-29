@@ -21,15 +21,14 @@ public class PathTest {
         for (Move move : path){
             System.out.println(" ");
             System.out.println("[\n" + move.getFromLongitude() + ", " + move.getFromLatitude() + "\n],");
-            System.out.println(move.getAngle());
+//            System.out.println(move.getAngle());
         }
         System.out.println(path.size());
 
     }
 
     public static List<Move> setup(){
-        LngLat destination = new LngLat( -3.1838572025299072, 55.94449876875712);
-        LngLat start = new LngLat(-3.186874, 55.944494);
+        LngLat destination = new LngLat( -3.202541470527649,55.943284737579376);
         ILPRestClient ILPRestClient = new ILPRestClient("https://ilp-rest.azurewebsites.net/");
         Order order = new Order("1",
                 LocalDate.of(2023, 10, 2),
