@@ -5,11 +5,14 @@ import uk.ac.ed.inf.ilp.constant.SystemConstants;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Pizza;
 import uk.ac.ed.inf.ilp.data.Restaurant;
+import uk.ac.ed.inf.ilp.interfaces.OrderValidation;
+
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
-public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation{
+
+public class OrderHandler implements OrderValidation {
     /**
      *
      * @param orderToValidate
@@ -99,16 +102,18 @@ public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation
      * @param order
      * @return true if expiry date is valid, false otherwise
      */
-    public static Boolean isExpiryValid(Order order){
+    private static Boolean isExpiryValid(Order order){
         String creditCardExpiry = order.getCreditCardInformation().getCreditCardExpiry();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
         simpleDateFormat.setLenient(false);
         Date creditCardExpiryFormatted = simpleDateFormat.parse(creditCardExpiry, new java.text.ParsePosition(0));
         Date orderDate = new Date();
         orderDate = simpleDateFormat.parse(simpleDateFormat.format(orderDate), new java.text.ParsePosition(0));
+
         if(creditCardExpiryFormatted != null){
             return creditCardExpiryFormatted.after(orderDate) || creditCardExpiryFormatted.equals(orderDate);
         }
+
         return false;
     }
 
@@ -134,7 +139,6 @@ public class OrderHandler implements uk.ac.ed.inf.ilp.interfaces.OrderValidation
     private static int isPizzaValid(Order order, Restaurant[] restaurants){
         HashMap<String, Integer> orderPizzaMap = new HashMap<>();
         HashMap<String, Integer> restaurantPizzaMap = new HashMap<>();
-        Pizza[] pizzas = order.getPizzasInOrder();
         for (Restaurant restaurant: restaurants){
             for (Pizza pizza: restaurant.menu()){
                 restaurantPizzaMap.put(pizza.name(), pizza.priceInPence());

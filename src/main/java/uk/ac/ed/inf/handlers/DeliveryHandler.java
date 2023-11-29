@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DeliveryHandler {
+
     /**
      * Sets up the necessary files and directories for a given date and returns a HashMap of file objects.
      *
@@ -26,7 +27,6 @@ public class DeliveryHandler {
      *         - "deliveryFileName": The file containing delivery information for the specified date.
      *         - "droneGeoJsonFileName": The file containing drone geospatial data for the specified date.
      */
-
     public static HashMap<String, File> setupPath(String date){
         String filepath = "resultfiles";
         String flightpathFileName = "flightpath-" + date + ".json";
@@ -74,14 +74,14 @@ public class DeliveryHandler {
         List<Delivery> deliveriesToWrite = new ArrayList<>();
         List<Move> movesToWrite = new ArrayList<>();
 
-        if (orders == null || restaurants == null){
-            return;
-        }
 
+        if (restaurants.length == 0){
+            System.err.println("No restaurants found");
+            System.exit(1);
+        }
         for (Order order: orders){
             order = orderHandler.validateOrder(order, restaurants);
             Restaurant orderRestaurant = orderHandler.getOrderRestaurant(order, restaurants);
-
             if (isOrderReady(order)){
                 List<Move> path = PathFindingAlgorithm.findPath(orderRestaurant.location(), noFlyZones, centralArea,
                         order);
@@ -100,12 +100,12 @@ public class DeliveryHandler {
                         order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
             }
         }
-
         writeToFiles(movesToWrite, deliveriesToWrite, fileMap);
     }
+
     /**
      * Checks if an order is ready to be delivered, helper function for deliverOrders
-     * @param order
+     * @param order order to check
      * @return
      */
     private static boolean isOrderReady(Order order){
@@ -113,6 +113,12 @@ public class DeliveryHandler {
                 && order.getOrderValidationCode() == OrderValidationCode.NO_ERROR;
     }
 
+    /**
+     * Writes the moves and deliveries to the files, helper function for deliverOrders
+     * @param movesToWrite 
+     * @param deliveriesToWrite
+     * @param fileMap
+     */
     private static void writeToFiles(List<Move> movesToWrite, List<Delivery> deliveriesToWrite, HashMap<String, File> fileMap){
         JsonWriter.writeMoveJson(movesToWrite, fileMap.get("flightpathFileName"));
         JsonWriter.writeMoveGeoJson(movesToWrite, fileMap.get("droneGeoJsonFileName"));

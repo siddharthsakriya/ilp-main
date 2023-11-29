@@ -16,6 +16,14 @@ public class PathFindingAlgorithm {
     private static LngLatHandling lngLatHandler = new LngLatHandler();
     private static final LngLat startPoint = new LngLat(-3.186874, 55.944494);
 
+    /**
+     * Finds the path from the start point to the goal point
+     * @param goalPoint
+     * @param noFlyZones
+     * @param centralArea
+     * @param order
+     * @return List<Move> path
+     */
     public static List<Move> findPath(LngLat goalPoint, NamedRegion[] noFlyZones, NamedRegion centralArea, Order order){
         //Open set which contains nodes that have been discovered but not yet explored
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(currNode -> currNode.getGScore() +
@@ -42,9 +50,12 @@ public class PathFindingAlgorithm {
             if (lngLatHandler.isCloseTo(currNode.getCurrLngLat(), goalPoint)){
                 return reconstructPath(currNode, goalPoint, startPoint, order);
             }
-            //If the current node is in the central area, set the flag to true
-            if (!lngLatHandler.isInRegion(currNode.getCurrLngLat(), centralArea)){
-                inCentral = false;
+
+            if(centralArea != null){
+                //If the current node is in the central area, set the flag to true
+                if (!lngLatHandler.isInRegion(currNode.getCurrLngLat(), centralArea)){
+                    inCentral = false;
+                }
             }
 
             //Generate the next positions
@@ -83,6 +94,14 @@ public class PathFindingAlgorithm {
         return null;
     }
 
+    /**
+     * Reconstructs the path, and returns the path to and from the start point
+     * @param currNode
+     * @param End
+     * @param Start
+     * @param order
+     * @return List<Move> path
+     */
     public static List<Move> reconstructPath(Node currNode, LngLat End, LngLat Start, Order order){
         List<Move> path = new ArrayList<>();
         List<Move> fullPath = new ArrayList<>();
@@ -96,17 +115,30 @@ public class PathFindingAlgorithm {
 
         fullPath.addAll(path);
         Collections.reverse(fullPath);
-        fullPath.add(new Move(order.getOrderNo(), End.lng(), End.lat(), End.lng(), End.lat(), 999));
+
+        //check this
+        fullPath.add(new Move(order.getOrderNo(), fullPath.get(fullPath.size()-1).getToLongitude(),
+                fullPath.get(fullPath.size()-1).getToLatitude(), fullPath.get(fullPath.size()-1).getToLongitude(),
+                fullPath.get(fullPath.size()-1).getToLatitude(), 999));
 
         for(Move move: path){
             Move revMove = new Move(move.getOrderNo(), move.getToLongitude(), move.getToLatitude(),
                     move.getFromLongitude(), move.getFromLatitude(), (move.getAngle() + 180) % 360);
             fullPath.add(revMove);
         }
+
         fullPath.add(new Move(order.getOrderNo(), Start.lng(), Start.lat(), Start.lng(), Start.lat(), 999));
         return fullPath;
     }
 
+    /**
+     * Generates the next positions
+     * @param curr
+     * @param noFlyZones
+     * @param flag
+     * @param centralArea
+     * @return List<Node> nextPositions
+     */
     private static List<Node> generateNextPositions(LngLat curr, NamedRegion[] noFlyZones, boolean flag, NamedRegion centralArea){
         List<Node> nextPositions = new ArrayList<>();
         double[] legalMoves = {0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5};
@@ -130,6 +162,12 @@ public class PathFindingAlgorithm {
         return nextPositions;
     }
 
+    /**
+     * Calculates the heuristic value
+     * @param pos
+     * @param end
+     * @return distance between pos and end
+     */
     private static double heuristic(LngLat pos, LngLat end){
         return lngLatHandler.distanceTo(pos, end);
     }

@@ -6,7 +6,6 @@ import uk.ac.ed.inf.ilp.data.NamedRegion;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 
-import java.io.IOException;
 import java.net.URL;
 
 public class ILPRestClient {
@@ -26,8 +25,9 @@ public class ILPRestClient {
             Restaurant[] restaurants = mapper.readValue(new URL(BASE_URL + "/restaurants"), Restaurant[].class);
             System.out.println("Restaurants Retrieved Successfully");
             return restaurants;
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
+            System.out.println("URL is invalid");
             System.exit(1);
         }
         Restaurant[] restaurants = {};
@@ -36,7 +36,7 @@ public class ILPRestClient {
 
     /**
      * Get all orders on a specific date
-     * @param date
+     * @param date the date to get orders for
      * @return an array of orders for a specific date
      */
     public Order[] getOrdersByDate(String date) {
@@ -46,8 +46,9 @@ public class ILPRestClient {
             Order[] orders = mapper.readValue(new URL(BASE_URL + "/orders/" + date), Order[].class);
             System.out.println("Orders Retrieved Successfully");
             return orders;
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
+            System.out.println("URL is invalid");
             System.exit(1);
         }
         Order[] orders = {};
@@ -64,8 +65,9 @@ public class ILPRestClient {
             NamedRegion[] noFlyZones = mapper.readValue(new URL(BASE_URL + "/noflyzones"), NamedRegion[].class);
             System.out.println("No Fly Zones Retrieved Successfully");
             return noFlyZones;
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
+            System.out.println("URL is invalid");
             System.exit(1);
         }
         NamedRegion[] noFlyZones = {};
@@ -82,10 +84,30 @@ public class ILPRestClient {
             NamedRegion centralArea = mapper.readValue(new URL(BASE_URL + "/centralarea"), NamedRegion.class);
             System.out.println("Central Area Retrieved Successfully");
             return centralArea;
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
+            System.out.println("URL is invalid");
             System.exit(1);
         }
         return null;
     }
+
+    /**
+     * Get the is alive status
+     * @return the is alive status
+     */
+    public boolean getIsAlive(){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String isAlive = mapper.readValue(new URL(BASE_URL + "/isalive"), String.class);
+            System.out.println("Is Alive Retrieved Successfully");
+            return Boolean.parseBoolean(isAlive);
+        } catch (Exception e) {
+            System.err.println(e);
+            System.out.println("URL is invalid");
+            System.exit(1);
+        }
+        return false;
+    }
+
 }

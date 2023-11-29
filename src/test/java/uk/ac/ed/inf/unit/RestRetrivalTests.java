@@ -1,19 +1,22 @@
 package uk.ac.ed.inf.unit;
 
 import junit.framework.Assert;
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import uk.ac.ed.inf.handlers.DeliveryHandler;
 import uk.ac.ed.inf.client.ILPRestClient;
-import uk.ac.ed.inf.handlers.OrderHandler;
-import uk.ac.ed.inf.ilp.constant.OrderStatus;
-import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
 import uk.ac.ed.inf.ilp.data.*;
-import uk.ac.ed.inf.ilp.interfaces.OrderValidation;
-
-import java.time.LocalDate;
 
 
 public class RestRetrivalTests {
+
+    @Test
+    public void invalidDate(){
+        ILPRestClient restController = new ILPRestClient("https://ilp-rest.azurewebsites.net");
+        Order[] orders = restController.getOrdersByDate("2023-10-27");
+        Assert.assertTrue(orders.length > 0);
+    }
+
     @Test
     public void testGetRest(){
         ILPRestClient restController = new ILPRestClient("https://ilp-rest.azurewebsites.net");
