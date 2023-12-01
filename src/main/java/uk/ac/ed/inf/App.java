@@ -1,4 +1,5 @@
 package uk.ac.ed.inf;
+import uk.ac.ed.inf.client.ILPRestClient;
 import uk.ac.ed.inf.handlers.DeliveryHandler;
 
 import java.net.URL;
@@ -8,6 +9,7 @@ import java.time.format.DateTimeParseException;
 public class App 
 {
     private static DeliveryHandler deliveryHandler = new DeliveryHandler();
+
     public static void main(String[] args)
     {
         if (args.length != 2) {
@@ -18,15 +20,20 @@ public class App
         String date = args[0];
         String url = args[1];
 
+        ILPRestClient ilpRestClient = new ILPRestClient(url);
+
         if (!isISO8601Date(date)) {
             System.err.println("Please provide a valid date in the ISO8601 format yyyy-MM-dd");
             System.exit(1);
         }
-        if (!isURL(url)) {
-            System.err.println("URL is not valid: " + url);
+
+        if (!isURL(url) || !ilpRestClient.getIsAlive()) {
+            System.err.println("input URL is not valid: " + url);
             System.exit(1);
         }
+
         deliveryHandler.deliverOrders(date, url);
+
     }
 
     /**

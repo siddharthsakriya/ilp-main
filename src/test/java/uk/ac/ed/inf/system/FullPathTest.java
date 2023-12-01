@@ -1,11 +1,9 @@
-package uk.ac.ed.inf.unit;
+package uk.ac.ed.inf.system;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.junit.Assert;
+import org.junit.Test;
 import uk.ac.ed.inf.App;
 import uk.ac.ed.inf.client.ILPRestClient;
 import uk.ac.ed.inf.handlers.LngLatHandler;
@@ -13,7 +11,6 @@ import uk.ac.ed.inf.handlers.OrderHandler;
 import uk.ac.ed.inf.ilp.data.LngLat;
 import uk.ac.ed.inf.ilp.data.Order;
 import uk.ac.ed.inf.ilp.data.Restaurant;
-import uk.ac.ed.inf.model.Delivery;
 import uk.ac.ed.inf.model.Move;
 
 import java.nio.file.Files;
@@ -25,19 +22,12 @@ import java.util.Random;
 /**
  * Unit test for simple App.
  */
-public class FullPathTest extends TestCase {
+public class FullPathTest{
 
-    public FullPathTest(String testName) {
-        super(testName);
-    }
-
-    public static Test suite() {
-        return new TestSuite(FullPathTest.class);
-    }
-
+    @Test
     public void testEnteringLeavingCentralArea() {
 
-        // getting a random day between 2020-09-01 and 2023-09-30
+        // getting a random day between 2020-11-01 and 2023-11-30
         Random random = new Random();
         String dayString;
 
@@ -61,18 +51,6 @@ public class FullPathTest extends TestCase {
 
             // returning the selected data (we get the first value as the api returns an array of length 1)
             paths = mapper.readValue(json, Move[].class);
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("The api request was not successful. Error code: " + e.getMessage());
-        }
-        Delivery[] deliveries;
-        try {
-            // getting the flightpath data from the json file
-            String json = new String(Files.readAllBytes(Paths.get("resultfiles/deliveries-2023-11-"+dayString+".json")));
-
-            ObjectMapper mapper = new ObjectMapper();
-            // returning the selected data (we get the first value as the api returns an array of length 1)
-            deliveries = mapper.readValue(json, Delivery[].class);
 
         } catch (Exception e) {
             throw new IllegalArgumentException("The api request was not successful. Error code: " + e.getMessage());

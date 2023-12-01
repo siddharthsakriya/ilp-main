@@ -107,11 +107,18 @@ public class OrderHandler implements OrderValidation {
      */
     private boolean isExpiryValid(Order order) {
         String expiryDate = order.getCreditCardInformation().getCreditCardExpiry();
+
         LocalDate orderDate = order.getOrderDate();
+
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/yy");
+
         try {
             YearMonth expiry = YearMonth.parse(expiryDate, dateFormat);
-            return orderDate.isBefore(expiry.atEndOfMonth()) || orderDate.isEqual(expiry.atEndOfMonth());
+            if (orderDate.isBefore(expiry.atEndOfMonth()) || orderDate.isEqual(expiry.atEndOfMonth())){
+                return true;
+            } else {
+                return false;
+            }
         } catch (Exception e) {
             return false;
         }
@@ -167,7 +174,7 @@ public class OrderHandler implements OrderValidation {
         for(Pizza pizza : pizzas){
             correctTotal += pizza.priceInPence();
         }
-        return (correctTotal+100) == order.getPriceTotalInPence();
+        return (correctTotal+SystemConstants.ORDER_CHARGE_IN_PENCE) == order.getPriceTotalInPence();
     }
     /**
      *

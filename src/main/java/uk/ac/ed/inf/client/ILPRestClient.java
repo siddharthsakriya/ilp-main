@@ -91,13 +91,12 @@ public class ILPRestClient {
     public boolean getIsAlive(){
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String isAlive = mapper.readValue(new URL(BASE_URL + "/isAlive"), String.class);
-            return Boolean.parseBoolean(isAlive);
+            Boolean isAlive = mapper.readValue(new URL(BASE_URL + "/isAlive"), Boolean.class);
+            return isAlive;
         } catch (Exception e) {
-            System.err.println("URL is invalid");
-            System.exit(1);
+            System.err.println("Cannot reach isAlive endpoint");
+            return false;
         }
-        return false;
     }
 
 }

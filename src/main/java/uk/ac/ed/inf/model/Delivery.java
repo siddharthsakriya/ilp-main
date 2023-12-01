@@ -1,10 +1,10 @@
 package uk.ac.ed.inf.model;
 
 public class Delivery {
-    private  String orderNo;
-    private  String orderStatus;
-    private  String orderValidationCode;
-    private  int costInPence;
+    private final String orderNo;
+    private final String orderStatus;
+    private final String orderValidationCode;
+    private final int costInPence;
 
     public Delivery(String orderNo, String orderStatus, String orderValidationCode, int costInPence) {
         this.orderNo = orderNo;
@@ -12,11 +12,6 @@ public class Delivery {
         this.orderValidationCode = orderValidationCode;
         this.costInPence = costInPence;
     }
-
-    public Delivery(){
-
-    }
-    
 
     public String getOrderNo() {
         return orderNo;
