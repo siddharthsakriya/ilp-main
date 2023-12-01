@@ -76,13 +76,14 @@ public class DeliveryHandler {
         List<Move> movesToWrite = new ArrayList<>();
 
         if (orders.length > 0 && restaurants.length > 0) {
+            System.out.println("Delivering orders...");
             for (Order order : orders) {
                 order = orderHandler.validateOrder(order, restaurants);
                 Restaurant orderRestaurant = orderHandler.getOrderRestaurant(order, restaurants);
                 if (isOrderReady(order)) {
                     List<Move> path = pathFindingAlgorithm.findPath(orderRestaurant.location(), noFlyZones, centralArea,
                             order);
-                    //TODO: remove tostring
+
                     if (path == null) {
                         deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
                                 order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
@@ -120,6 +121,7 @@ public class DeliveryHandler {
      * @param fileMap
      */
     private void writeToFiles(List<Move> movesToWrite, List<Delivery> deliveriesToWrite, HashMap<String, File> fileMap){
+        System.out.println("Writing to files...");
         jsonWriter.writeMoveJson(movesToWrite, fileMap.get("flightpathFileName"));
         jsonWriter.writeMoveGeoJson(movesToWrite, fileMap.get("droneGeoJsonFileName"));
         jsonWriter.writeOrderJson(deliveriesToWrite, fileMap.get("deliveryFileName"));
