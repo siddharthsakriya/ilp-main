@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 
 public class App 
 {
+    private static DeliveryHandler deliveryHandler = new DeliveryHandler();
     public static void main(String[] args)
     {
         if (args.length != 2) {
@@ -21,13 +22,11 @@ public class App
             System.err.println("Please provide a valid date in the ISO8601 format yyyy-MM-dd");
             System.exit(1);
         }
-
         if (!isURL(url)) {
             System.err.println("URL is not valid: " + url);
             System.exit(1);
         }
-
-        DeliveryHandler.deliverOrders(date, url);
+        deliveryHandler.deliverOrders(date, url);
     }
 
     /**

@@ -1,17 +1,22 @@
 package uk.ac.ed.inf.model;
 
 public class Delivery {
-    private final String orderNo;
-    private final String orderStatus;
-    private final String orderValidationCode;
-    private final int priceTotalInPence;
+    private  String orderNo;
+    private  String orderStatus;
+    private  String orderValidationCode;
+    private  int costInPence;
 
-    public Delivery(String orderNo, String orderStatus, String orderValidationCode, int priceTotalInPence) {
+    public Delivery(String orderNo, String orderStatus, String orderValidationCode, int costInPence) {
         this.orderNo = orderNo;
         this.orderStatus = orderStatus;
         this.orderValidationCode = orderValidationCode;
-        this.priceTotalInPence = priceTotalInPence;
+        this.costInPence = costInPence;
     }
+
+    public Delivery(){
+
+    }
+    
 
     public String getOrderNo() {
         return orderNo;
@@ -25,8 +30,8 @@ public class Delivery {
         return orderValidationCode;
     }
 
-    public int getPriceTotalInPence() {
-        return priceTotalInPence;
+    public int getCostInPence() {
+        return costInPence;
     }
 
 }

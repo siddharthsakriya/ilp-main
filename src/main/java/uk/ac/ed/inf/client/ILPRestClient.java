@@ -23,11 +23,9 @@ public class ILPRestClient {
         ObjectMapper mapper = new ObjectMapper();
         try {
             Restaurant[] restaurants = mapper.readValue(new URL(BASE_URL + "/restaurants"), Restaurant[].class);
-            System.out.println("Restaurants Retrieved Successfully");
             return restaurants;
         } catch (Exception e) {
-            System.err.println(e);
-            System.out.println("URL is invalid");
+            System.err.println("URL is invalid");
             System.exit(1);
         }
         Restaurant[] restaurants = {};
@@ -44,11 +42,9 @@ public class ILPRestClient {
         mapper.registerModule(new JavaTimeModule());
         try {
             Order[] orders = mapper.readValue(new URL(BASE_URL + "/orders/" + date), Order[].class);
-            System.out.println("Orders Retrieved Successfully");
             return orders;
         } catch (Exception e) {
-            System.err.println(e);
-            System.out.println("URL is invalid");
+            System.err.println("URL is invalid");
             System.exit(1);
         }
         Order[] orders = {};
@@ -63,11 +59,9 @@ public class ILPRestClient {
         try {
             ObjectMapper mapper = new ObjectMapper();
             NamedRegion[] noFlyZones = mapper.readValue(new URL(BASE_URL + "/noflyzones"), NamedRegion[].class);
-            System.out.println("No Fly Zones Retrieved Successfully");
             return noFlyZones;
         } catch (Exception e) {
-            System.err.println(e);
-            System.out.println("URL is invalid");
+            System.err.println("URL is invalid");
             System.exit(1);
         }
         NamedRegion[] noFlyZones = {};
@@ -82,11 +76,9 @@ public class ILPRestClient {
         try {
             ObjectMapper mapper = new ObjectMapper();
             NamedRegion centralArea = mapper.readValue(new URL(BASE_URL + "/centralarea"), NamedRegion.class);
-            System.out.println("Central Area Retrieved Successfully");
             return centralArea;
         } catch (Exception e) {
-            System.err.println(e);
-            System.out.println("URL is invalid");
+            System.err.println("URL is invalid");
             System.exit(1);
         }
         return null;
@@ -99,12 +91,10 @@ public class ILPRestClient {
     public boolean getIsAlive(){
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String isAlive = mapper.readValue(new URL(BASE_URL + "/isalive"), String.class);
-            System.out.println("Is Alive Retrieved Successfully");
+            String isAlive = mapper.readValue(new URL(BASE_URL + "/isAlive"), String.class);
             return Boolean.parseBoolean(isAlive);
         } catch (Exception e) {
-            System.err.println(e);
-            System.out.println("URL is invalid");
+            System.err.println("URL is invalid");
             System.exit(1);
         }
         return false;

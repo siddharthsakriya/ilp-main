@@ -92,6 +92,7 @@
           <outputFile>${project.build.directory}/${project.artifactId}-${project.version}.jar</outputFile>
         </configuration>
       </plugin>
+
       <!--            installing the maven install plugin-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

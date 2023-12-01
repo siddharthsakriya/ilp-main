@@ -7,12 +7,15 @@ import uk.ac.ed.inf.ilp.data.Pizza;
 import uk.ac.ed.inf.ilp.data.Restaurant;
 import uk.ac.ed.inf.ilp.interfaces.OrderValidation;
 
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
 public class OrderHandler implements OrderValidation {
+
     /**
      *
      * @param orderToValidate
@@ -77,7 +80,7 @@ public class OrderHandler implements OrderValidation {
      * @param order
      * @return true if card number is valid, false otherwise
      */
-    private static Boolean isCardNumInvalid(Order order){
+    private Boolean isCardNumInvalid(Order order){
         String cardNum = order.getCreditCardInformation().getCreditCardNumber();
         if (cardNum.length() != 16 || !isNum(cardNum)){
             return false;
@@ -89,7 +92,7 @@ public class OrderHandler implements OrderValidation {
      * @param order
      * @return true if size is valid, false otherwise
      */
-    private static Boolean isSizeValid(Order order){
+    private Boolean isSizeValid(Order order){
         Pizza[] pizzas = order.getPizzasInOrder();
         if (pizzas.length > SystemConstants.MAX_PIZZAS_PER_ORDER){
             return false;
@@ -102,19 +105,16 @@ public class OrderHandler implements OrderValidation {
      * @param order
      * @return true if expiry date is valid, false otherwise
      */
-    private static Boolean isExpiryValid(Order order){
-        String creditCardExpiry = order.getCreditCardInformation().getCreditCardExpiry();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
-        simpleDateFormat.setLenient(false);
-        Date creditCardExpiryFormatted = simpleDateFormat.parse(creditCardExpiry, new java.text.ParsePosition(0));
-        Date orderDate = new Date();
-        orderDate = simpleDateFormat.parse(simpleDateFormat.format(orderDate), new java.text.ParsePosition(0));
-
-        if(creditCardExpiryFormatted != null){
-            return creditCardExpiryFormatted.after(orderDate) || creditCardExpiryFormatted.equals(orderDate);
+    private boolean isExpiryValid(Order order) {
+        String expiryDate = order.getCreditCardInformation().getCreditCardExpiry();
+        LocalDate orderDate = order.getOrderDate();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/yy");
+        try {
+            YearMonth expiry = YearMonth.parse(expiryDate, dateFormat);
+            return orderDate.isBefore(expiry.atEndOfMonth()) || orderDate.isEqual(expiry.atEndOfMonth());
+        } catch (Exception e) {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -122,7 +122,7 @@ public class OrderHandler implements OrderValidation {
      * @param order
      * @return true if CVV is valid, false otherwise
      */
-    private static Boolean isCVVValid(Order order){
+    private Boolean isCVVValid(Order order){
         String cvv = order.getCreditCardInformation().getCvv();
         if (cvv.length() != 3 || !isNum(cvv)){
             return false;
@@ -136,7 +136,7 @@ public class OrderHandler implements OrderValidation {
      * @param restaurants
      * @return 0 if pizza is valid, 1 if pizza is not defined, 2 if pizza is defined but price is incorrect
      */
-    private static int isPizzaValid(Order order, Restaurant[] restaurants){
+    private int isPizzaValid(Order order, Restaurant[] restaurants){
         HashMap<String, Integer> orderPizzaMap = new HashMap<>();
         HashMap<String, Integer> restaurantPizzaMap = new HashMap<>();
         for (Restaurant restaurant: restaurants){
@@ -161,7 +161,7 @@ public class OrderHandler implements OrderValidation {
      * @param order
      * @return true if total cost is valid, false otherwise
      */
-    private static Boolean isTotalCostValid(Order order){
+    private Boolean isTotalCostValid(Order order){
         Pizza[] pizzas = order.getPizzasInOrder();
         double correctTotal = 0;
         for(Pizza pizza : pizzas){
@@ -175,7 +175,7 @@ public class OrderHandler implements OrderValidation {
      * @param restaurants
      * @return restaurant if order is valid, null otherwise
      */
-    public static Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants){
+    public Restaurant getOrderRestaurant(Order order, Restaurant[] restaurants){
         HashSet<Pizza> pizzas = new HashSet<>();
         pizzas.addAll(List.of(order.getPizzasInOrder()));
         for (Restaurant restaurant : restaurants) {
@@ -191,7 +191,7 @@ public class OrderHandler implements OrderValidation {
      * @param orderToValidate
      * @return true if restaurant is open, false otherwise
      */
-    private static Boolean isRestrauntOpen(Restaurant restaurant, Order orderToValidate){
+    private Boolean isRestrauntOpen(Restaurant restaurant, Order orderToValidate){
         DayOfWeek dayOfWeek = orderToValidate.getOrderDate().getDayOfWeek();
         if(!Arrays.asList(restaurant.openingDays()).contains(dayOfWeek)){
             return true;
@@ -203,7 +203,7 @@ public class OrderHandler implements OrderValidation {
      * @param num
      * @return true if num is a number, false otherwise
      */
-    private static Boolean isNum(String num){
+    private Boolean isNum(String num){
         try {
             Long.parseLong(num);
         } catch (NumberFormatException nfe) {

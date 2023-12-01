@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DeliveryHandler {
+    private static JsonWriter jsonWriter = new JsonWriter();
 
     /**
      * Sets up the necessary files and directories for a given date and returns a HashMap of file objects.
@@ -27,7 +28,7 @@ public class DeliveryHandler {
      *         - "deliveryFileName": The file containing delivery information for the specified date.
      *         - "droneGeoJsonFileName": The file containing drone geospatial data for the specified date.
      */
-    public static HashMap<String, File> setupPath(String date){
+    public HashMap<String, File> setupPath(String date){
         String filepath = "resultfiles";
         String flightpathFileName = "flightpath-" + date + ".json";
         String deliveryFileName = "deliveries-" + date + ".json";
@@ -50,7 +51,7 @@ public class DeliveryHandler {
      * @param directory
      * @return File resultFile
      */
-    private static File createResultFile(String fileName, File directory){
+    private File createResultFile(String fileName, File directory){
         File resultFile = new File(directory, fileName);
         if (resultFile.exists()) {
             resultFile.delete();
@@ -62,42 +63,41 @@ public class DeliveryHandler {
      * Iterates through the orders and delivers them if they are valid
      * @param date
      */
-    public static void deliverOrders(String date, String url) {
+    public void deliverOrders(String date, String url) {
         ILPRestClient ilpRestClient = new ILPRestClient(url);
         Order[] orders = ilpRestClient.getOrdersByDate(date);
         Restaurant[] restaurants = ilpRestClient.getRestaurants();
         NamedRegion[] noFlyZones = ilpRestClient.getNoFlyZones();
         NamedRegion centralArea = ilpRestClient.getCentralArea();
-
+        PathFindingAlgorithm pathFindingAlgorithm = new PathFindingAlgorithm();
         OrderHandler orderHandler = new OrderHandler();
         HashMap<String, File> fileMap = setupPath(date);
         List<Delivery> deliveriesToWrite = new ArrayList<>();
         List<Move> movesToWrite = new ArrayList<>();
 
+        if (orders.length > 0 && restaurants.length > 0) {
+            for (Order order : orders) {
+                order = orderHandler.validateOrder(order, restaurants);
+                Restaurant orderRestaurant = orderHandler.getOrderRestaurant(order, restaurants);
+                if (isOrderReady(order)) {
+                    List<Move> path = pathFindingAlgorithm.findPath(orderRestaurant.location(), noFlyZones, centralArea,
+                            order);
+                    //TODO: remove tostring
+                    if (path == null) {
+                        deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
+                                order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
+                        continue;
+                    }
 
-        if (restaurants.length == 0){
-            System.err.println("No restaurants found");
-            System.exit(1);
-        }
-        for (Order order: orders){
-            order = orderHandler.validateOrder(order, restaurants);
-            Restaurant orderRestaurant = orderHandler.getOrderRestaurant(order, restaurants);
-            if (isOrderReady(order)){
-                List<Move> path = PathFindingAlgorithm.findPath(orderRestaurant.location(), noFlyZones, centralArea,
-                        order);
-                if (path == null){
+                    movesToWrite.addAll(path);
+                    order.setOrderStatus(OrderStatus.DELIVERED);
                     deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
                             order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
-                    continue;
+                } else {
+                    deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
+                            order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
                 }
-                movesToWrite.addAll(path);
-                order.setOrderStatus(OrderStatus.DELIVERED);
-                deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
-                        order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
-            }
-            else {
-                deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
-                        order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
+
             }
         }
         writeToFiles(movesToWrite, deliveriesToWrite, fileMap);
@@ -108,7 +108,7 @@ public class DeliveryHandler {
      * @param order order to check
      * @return
      */
-    private static boolean isOrderReady(Order order){
+    private boolean isOrderReady(Order order){
         return order.getOrderStatus() == OrderStatus.VALID_BUT_NOT_DELIVERED
                 && order.getOrderValidationCode() == OrderValidationCode.NO_ERROR;
     }
@@ -119,10 +119,10 @@ public class DeliveryHandler {
      * @param deliveriesToWrite
      * @param fileMap
      */
-    private static void writeToFiles(List<Move> movesToWrite, List<Delivery> deliveriesToWrite, HashMap<String, File> fileMap){
-        JsonWriter.writeMoveJson(movesToWrite, fileMap.get("flightpathFileName"));
-        JsonWriter.writeMoveGeoJson(movesToWrite, fileMap.get("droneGeoJsonFileName"));
-        JsonWriter.writeOrderJson(deliveriesToWrite, fileMap.get("deliveryFileName"));
+    private void writeToFiles(List<Move> movesToWrite, List<Delivery> deliveriesToWrite, HashMap<String, File> fileMap){
+        jsonWriter.writeMoveJson(movesToWrite, fileMap.get("flightpathFileName"));
+        jsonWriter.writeMoveGeoJson(movesToWrite, fileMap.get("droneGeoJsonFileName"));
+        jsonWriter.writeOrderJson(deliveriesToWrite, fileMap.get("deliveryFileName"));
     }
 
 }

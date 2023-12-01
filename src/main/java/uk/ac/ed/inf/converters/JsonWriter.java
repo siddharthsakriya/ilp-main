@@ -19,13 +19,13 @@ public class JsonWriter {
      * @param moveList list of moves
      * @param outputFile output file
      */
-    public static void writeMoveJson(List<Move> moveList, File outputFile){
+    public void writeMoveJson(List<Move> moveList, File outputFile){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Move>>() {}).withDefaultPrettyPrinter();
             writer.writeValue(outputFile, moveList);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error writing moves to file");
         }
     }
 
@@ -34,13 +34,13 @@ public class JsonWriter {
      * @param deliveries list of deliveries
      * @param outputFile output file
      */
-    public static void writeOrderJson(List<Delivery> deliveries, File outputFile){
+    public void writeOrderJson(List<Delivery> deliveries, File outputFile){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Delivery>>() {});
+            ObjectWriter writer = objectMapper.writerFor(new TypeReference<List<Delivery>>() {}).withDefaultPrettyPrinter();
             writer.writeValue(outputFile, deliveries);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error writing orders to file");
         }
     }
 
@@ -49,7 +49,7 @@ public class JsonWriter {
      * @param movesList list of moves
      * @param file output file
      */
-    public static void writeMoveGeoJson(List<Move> movesList, File file){
+    public void writeMoveGeoJson(List<Move> movesList, File file){
         JSONObject featureCollections = new JSONObject();
         JSONObject properties = new JSONObject();
         JSONArray features = new JSONArray();
@@ -71,11 +71,11 @@ public class JsonWriter {
      * @param geoJsonString large JSON string that contains the GeoJSON
      * @param file output file
      */
-    public static void GeoJsonWriter(File file, String geoJsonString){
+    public void GeoJsonWriter(File file, String geoJsonString){
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(geoJsonString);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error writing GeoJson to file");
         }
     }
 
@@ -85,7 +85,7 @@ public class JsonWriter {
      * @param latitude
      * @return JSONArray of coordinates
      */
-    private static JSONArray createCoordinate(double longitude, double latitude) {
+    private JSONArray createCoordinate(double longitude, double latitude) {
         JSONArray coordinate = new JSONArray();
         coordinate.put(longitude);
         coordinate.put(latitude);
@@ -97,7 +97,7 @@ public class JsonWriter {
      * @param movesList list of moves
      * @return JSONArray of coordinates
      */
-    public static JSONArray populateCoordinates(List<Move> movesList){
+    public JSONArray populateCoordinates(List<Move> movesList){
         JSONArray coordinates = new JSONArray();
         for(Move move: movesList){
             coordinates.put(createCoordinate(move.getFromLongitude(), move.getFromLatitude()));
