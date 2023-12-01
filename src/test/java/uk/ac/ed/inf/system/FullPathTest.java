@@ -19,9 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Unit test for simple App.
- */
+
 public class FullPathTest{
 
     @Test
