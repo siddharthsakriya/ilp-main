@@ -25,7 +25,7 @@ import java.util.Random;
 public class FullPathTest{
 
     @Test
-    public void testEnteringLeavingCentralArea() {
+    public void fullPathTest() {
 
         // getting a random day between 2020-11-01 and 2023-11-30
         Random random = new Random();
