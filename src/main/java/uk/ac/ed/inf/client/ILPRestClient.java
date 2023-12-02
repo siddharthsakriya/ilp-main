@@ -25,8 +25,7 @@ public class ILPRestClient {
             Restaurant[] restaurants = mapper.readValue(new URL(BASE_URL + "/restaurants"), Restaurant[].class);
             return restaurants;
         } catch (Exception e) {
-            System.err.println("URL is invalid");
-            System.exit(1);
+            System.err.println("Unable to retrieve restaurants");
         }
         Restaurant[] restaurants = {};
         return restaurants;
@@ -44,8 +43,7 @@ public class ILPRestClient {
             Order[] orders = mapper.readValue(new URL(BASE_URL + "/orders/" + date), Order[].class);
             return orders;
         } catch (Exception e) {
-            System.err.println("URL is invalid");
-            System.exit(1);
+            System.err.println("Unable to retrieve orders by date: " + date);
         }
         Order[] orders = {};
         return orders;
@@ -61,8 +59,7 @@ public class ILPRestClient {
             NamedRegion[] noFlyZones = mapper.readValue(new URL(BASE_URL + "/noflyzones"), NamedRegion[].class);
             return noFlyZones;
         } catch (Exception e) {
-            System.err.println("URL is invalid");
-            System.exit(1);
+            System.err.println("Unable to retrieve no-fly zones");
         }
         NamedRegion[] noFlyZones = {};
         return noFlyZones;
@@ -78,8 +75,7 @@ public class ILPRestClient {
             NamedRegion centralArea = mapper.readValue(new URL(BASE_URL + "/centralarea"), NamedRegion.class);
             return centralArea;
         } catch (Exception e) {
-            System.err.println("URL is invalid");
-            System.exit(1);
+            System.err.println("Unable to retrieve central area");
         }
         return null;
     }
@@ -94,7 +90,7 @@ public class ILPRestClient {
             Boolean isAlive = mapper.readValue(new URL(BASE_URL + "/isAlive"), Boolean.class);
             return isAlive;
         } catch (Exception e) {
-            System.err.println("Cannot reach isAlive endpoint");
+            System.err.println("Cannot reach the isAlive endpoint");
             return false;
         }
     }

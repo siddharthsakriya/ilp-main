@@ -17,7 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DeliveryHandler {
-    private static JsonWriter jsonWriter = new JsonWriter();
+    private JsonWriter jsonWriter = new JsonWriter();
+    private ILPRestClient ilpRestClient;
+
+    public DeliveryHandler(ILPRestClient ilpRestClient) {
+        this.ilpRestClient = ilpRestClient;
+    }
 
     /**
      * Sets up the necessary files and directories for a given date and returns a HashMap of file objects.
@@ -63,12 +68,12 @@ public class DeliveryHandler {
      * Iterates through the orders and delivers them if they are valid
      * @param date
      */
-    public void deliverOrders(String date, String url) {
-        ILPRestClient ilpRestClient = new ILPRestClient(url);
+    public void deliverOrders(String date) {
         Order[] orders = ilpRestClient.getOrdersByDate(date);
         Restaurant[] restaurants = ilpRestClient.getRestaurants();
         NamedRegion[] noFlyZones = ilpRestClient.getNoFlyZones();
         NamedRegion centralArea = ilpRestClient.getCentralArea();
+
         PathFindingAlgorithm pathFindingAlgorithm = new PathFindingAlgorithm();
         OrderHandler orderHandler = new OrderHandler();
         HashMap<String, File> fileMap = setupPath(date);

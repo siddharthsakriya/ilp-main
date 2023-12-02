@@ -87,6 +87,7 @@ public class OrderHandler implements OrderValidation {
         }
         return true;
     }
+
     /**
      *
      * @param order
@@ -163,6 +164,7 @@ public class OrderHandler implements OrderValidation {
         }
         return 0;
     }
+
     /**
      *
      * @param order
@@ -176,6 +178,7 @@ public class OrderHandler implements OrderValidation {
         }
         return (correctTotal+SystemConstants.ORDER_CHARGE_IN_PENCE) == order.getPriceTotalInPence();
     }
+
     /**
      *
      * @param order
@@ -192,6 +195,7 @@ public class OrderHandler implements OrderValidation {
         }
         return null;
     }
+
     /**
      *
      * @param restaurant
@@ -205,6 +209,7 @@ public class OrderHandler implements OrderValidation {
         }
         return false;
     }
+
     /**
      *
      * @param num

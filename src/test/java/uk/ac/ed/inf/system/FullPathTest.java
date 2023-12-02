@@ -63,6 +63,7 @@ public class FullPathTest{
         Boolean validPath = false;
         Boolean validPath2 = false;
         OrderHandler orderHandler = new OrderHandler();
+
         for(Move path: paths){
             if (path.getAngle() == 999){
                 List<Order> orders1 = Arrays.asList(orders);

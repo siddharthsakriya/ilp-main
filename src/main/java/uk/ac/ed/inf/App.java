@@ -8,8 +8,6 @@ import java.time.format.DateTimeParseException;
 
 public class App 
 {
-    private static DeliveryHandler deliveryHandler = new DeliveryHandler();
-
     public static void main(String[] args)
     {
         if (args.length != 2) {
@@ -32,7 +30,8 @@ public class App
             System.exit(1);
         }
 
-        deliveryHandler.deliverOrders(date, url);
+        DeliveryHandler deliveryHandler = new DeliveryHandler(ilpRestClient);
+        deliveryHandler.deliverOrders(date);
 
     }
 
