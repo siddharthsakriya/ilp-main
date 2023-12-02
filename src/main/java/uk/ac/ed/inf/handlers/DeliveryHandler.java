@@ -90,18 +90,18 @@ public class DeliveryHandler {
                             order);
 
                     if (path == null) {
-                        deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
-                                order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
+                        deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus(),
+                                order.getOrderValidationCode(), order.getPriceTotalInPence()));
                         continue;
                     }
 
                     movesToWrite.addAll(path);
                     order.setOrderStatus(OrderStatus.DELIVERED);
-                    deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
-                            order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
+                    deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus(),
+                            order.getOrderValidationCode(), order.getPriceTotalInPence()));
                 } else {
-                    deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus().toString(),
-                            order.getOrderValidationCode().toString(), order.getPriceTotalInPence()));
+                    deliveriesToWrite.add(new Delivery(order.getOrderNo(), order.getOrderStatus(),
+                            order.getOrderValidationCode(), order.getPriceTotalInPence()));
                 }
 
             }

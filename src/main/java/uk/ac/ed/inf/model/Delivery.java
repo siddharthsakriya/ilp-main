@@ -1,12 +1,15 @@
 package uk.ac.ed.inf.model;
 
+import uk.ac.ed.inf.ilp.constant.OrderStatus;
+import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
+
 public class Delivery {
     private final String orderNo;
-    private final String orderStatus;
-    private final String orderValidationCode;
+    private final OrderStatus orderStatus;
+    private final OrderValidationCode orderValidationCode;
     private final int costInPence;
 
-    public Delivery(String orderNo, String orderStatus, String orderValidationCode, int costInPence) {
+    public Delivery(String orderNo, OrderStatus orderStatus, OrderValidationCode orderValidationCode, int costInPence) {
         this.orderNo = orderNo;
         this.orderStatus = orderStatus;
         this.orderValidationCode = orderValidationCode;
@@ -17,11 +20,11 @@ public class Delivery {
         return orderNo;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public String getOrderValidationCode() {
+    public OrderValidationCode getOrderValidationCode() {
         return orderValidationCode;
     }
 
