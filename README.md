@@ -18,6 +18,11 @@ My solution can be split into 3 logical sections:
 
 I have implemented an adapted A* algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm) which follows a more greedy approach. I am utilising spring rest template to retrieve the data from the REST server, "https://ilp-rest.azurewebsites.net/".
 
+## Results
+
+This solution received 49/50 (98%). Combined with other components of the course my overall grade is 90.33% (A1), please refer below for a breakdown:
+((0.74*17) + (1.0*8) + (0.83*25) + (0.98*50))
+
 
 
 
